@@ -27,15 +27,41 @@ public class Robot extends IterativeRobot {
 	TestingThatThing sparkTest;
 	JoystickCourtney firstJoystick;
 	TestingThatThing secondMotor;
+	RobotEncoder firstEncoder;
+	RobotEncoder secondEncoder;
 	
 	public void robotInit() {
 		sparkTest = new TestingThatThing(0);
 		firstJoystick = new JoystickCourtney(0);
 		secondMotor = new TestingThatThing(1);
+		firstEncoder = new RobotEncoder(0 , 1 , 207 , 6);
+		secondEncoder = new RobotEncoder(2 , 3 , 207 , 6);
+		
 	}
 	
 	public void teleopPeriodic() {
 		sparkTest.set(firstJoystick.getLeftJoystickVertical() * .5);
 		secondMotor.set(firstJoystick.getRightJoystickVertical() * .5);
+		System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
 	}
+	
+	public void autonomousPeriodic() {
+		System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
+		/*
+		//to run motor for a distance:
+		if(firstEncoder.getCount() < firstEncoder.findNumberOfCounts(firstEncoder.findDistancePerPulse(), 12)) {
+			sparkTest.set(0.7);
+		}
+		else {
+			sparkTest.set(0);
+		}
+		*/
+		if(secondEncoder.getCount() > -(secondEncoder.findNumberOfCounts(secondEncoder.findDistancePerPulse(), 12))) {
+			secondMotor.set(0.7);
+		}
+		else {
+			secondMotor.set(0);
+		}
+	}
+	
 }
