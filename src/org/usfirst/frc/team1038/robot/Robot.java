@@ -9,6 +9,7 @@ package org.usfirst.frc.team1038.robot;
 
 import java.util.concurrent.TimeUnit;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
@@ -26,12 +27,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 	private static final String kDefaultAuto = "Default";
 	private static final String kCustomAuto = "My Auto";
+	public static final double WHEEL_DIAM = 6;
+	public static final double COUNTS_PER_REV = 207;
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 
 	private Spark spade, spade2;
 
 	private Joystick sticc;
+	
+	private Encoder encodeman;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -45,6 +50,8 @@ public class Robot extends IterativeRobot {
 		spade = new Spark(0);
 		spade2 = new Spark(1); // make this into an array or something lol
 		sticc = new Joystick(0);
+		encodeman = new Encoder(2,3);
+		encodeman.reset();
 
 	}
 
@@ -67,6 +74,10 @@ public class Robot extends IterativeRobot {
 		// defaultAuto);
 		System.out.println("Auto selected: " + m_autoSelected);
 	}
+	
+	public void teleopInit() {
+		encodeman.reset();
+	}
 
 	/**
 	 * This function is called periodically during autonomous.
@@ -82,6 +93,23 @@ public class Robot extends IterativeRobot {
 			// Put default auto code here
 			break;
 		}
+		System.out.println(encodeman.get());
+		/*if (Math.abs(encodeman.get()) < 3000) {
+			spade2.set(-(encodeman.get()+4000)/7005.0);
+			System.out.println((encodeman.get()+100)/405.0);
+		} else {
+			spade2.set(0);
+			System.out.println("h");
+		}*/
+		
+		
+		if (Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())) > 3)
+			spade2.set(-0);
+		else
+			spade2.set(0.9);
+		
+		
+		
 	}
 
 	/**
@@ -90,14 +118,16 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		if (!sticc.getRawButton(1)) {
-			spade.set(sticc.getX()*0.5);
-			spade2.set(sticc.getZ()*0.5);
+			spade.set(sticc.getX()*1);
+			spade2.set(sticc.getZ()*1);
 		} else {
 			spade.set(Math.sin(System.currentTimeMillis()*0.01)*0.5);
 			spade2.set(Math.cos(System.currentTimeMillis()*0.01)*0.5);
 		}
+		System.out.println(encodeman.get());
 
 	}
+	
 
 	/**
 	 * This function is called periodically during test mode.
@@ -110,5 +140,10 @@ public class Robot extends IterativeRobot {
 		if (b)
 			return 0.4;
 		return -0.4;
+	}
+	
+	//return same unit as you put wheel diam lmao xdddddddd
+	public double getDist(double countsPerRev, double wheelDiam, int totalCounts) {
+		return ((double)totalCounts/countsPerRev*(wheelDiam*Math.PI));
 	}
 }
