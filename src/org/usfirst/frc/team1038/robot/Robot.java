@@ -75,6 +75,15 @@ public class Robot extends IterativeRobot {
 		System.out.println("Auto selected: " + m_autoSelected);
 	}
 	
+	public void moveDist(double dist, double speed) {
+		int curCounts = encodeman.get();
+		while (Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get()-curCounts)) < dist) {
+			spade2.set(speed);
+		}
+		spade2.set(0);
+		
+	}
+	
 	public void teleopInit() {
 		encodeman.reset();
 	}
@@ -102,11 +111,12 @@ public class Robot extends IterativeRobot {
 			System.out.println("h");
 		}*/
 		
-		
-		if (Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())) > 3)
+		double doDistance = 50;
+		if (Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())) >= doDistance)
 			spade2.set(-0);
 		else
-			spade2.set(0.9);
+			spade2.set(-1*Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())-doDistance)/(doDistance*4)-.25);
+			
 		
 		
 		
