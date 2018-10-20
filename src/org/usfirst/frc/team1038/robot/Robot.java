@@ -9,9 +9,12 @@ package org.usfirst.frc.team1038.robot;
 
 import java.util.concurrent.TimeUnit;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -37,6 +40,8 @@ public class Robot extends IterativeRobot {
 	private Joystick sticc;
 	
 	private Encoder encodeman;
+	
+	private DoubleSolenoid ligmoid;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -52,6 +57,8 @@ public class Robot extends IterativeRobot {
 		sticc = new Joystick(0);
 		encodeman = new Encoder(2,3);
 		encodeman.reset();
+		ligmoid = new DoubleSolenoid(0,1);
+		
 
 	}
 
@@ -111,11 +118,11 @@ public class Robot extends IterativeRobot {
 			System.out.println("h");
 		}*/
 		
-		double doDistance = 50;
+		double doDistance = 12;
 		if (Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())) >= doDistance)
 			spade2.set(-0);
 		else
-			spade2.set(-1*Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())-doDistance)/(doDistance*4)-.25);
+			spade2.set(-1*Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())-doDistance)/(doDistance*2)-.5);
 			
 		
 		
@@ -144,6 +151,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		try {
+		ligmoid.set(DoubleSolenoid.Value.kForward);
+		ligmoid.wait(10);
+		ligmoid.set(DoubleSolenoid.Value.kReverse);
+		ligmoid.wait(10);
+		ligmoid.setName("jeff");
+		} catch (Exception minecraft) {
+			;
+		}
 	}
 
 	public double bool2dub(boolean b) {
