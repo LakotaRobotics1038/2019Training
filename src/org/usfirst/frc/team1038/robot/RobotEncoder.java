@@ -6,13 +6,10 @@ import edu.wpi.first.wpilibj.hal.EncoderJNI;
 
 public class RobotEncoder extends Encoder {
 	
-	static int countPerRevolution;
-	static double wheelsDiameter;
 	
 	public RobotEncoder(int channelA, int channelB, int countsPerRevolution, double wheelDiameter) {
 		super(channelA, channelB);
-		countPerRevolution = countsPerRevolution;
-		wheelsDiameter = wheelDiameter;
+		setDistancePerPulse(findDistancePerPulse(countsPerRevolution, wheelDiameter));
 	}
 	
 	public int getCount() {
@@ -23,11 +20,8 @@ public class RobotEncoder extends Encoder {
 		EncoderJNI.resetEncoder(0);
 	}
 	
-	public static double findDistancePerPulse() {
-		return (1 / countPerRevolution) * (wheelsDiameter * Math.PI);
+	public static double findDistancePerPulse(double countsPerRevolution, double wheelDiameter) {
+		return (1 / countsPerRevolution) * (wheelDiameter * Math.PI);
 	}
 	
-	public double findNumberOfCounts(double distancePerCount, double distanceDesired) {
-		return (distanceDesired / distancePerCount);
-	}
 }

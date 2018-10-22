@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team1038.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +24,7 @@ public class Robot extends IterativeRobot {
 	private static final String kCustomAuto = "My Auto";
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
+	private RobotPneumatics shifter = new RobotPneumatics(2, 3);
 	
 	TestingThatThing sparkTest;
 	JoystickCourtney firstJoystick;
@@ -42,26 +44,29 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		sparkTest.set(firstJoystick.getLeftJoystickVertical() * .5);
 		secondMotor.set(firstJoystick.getRightJoystickVertical() * .5);
-		System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
+		//System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
+		if (firstJoystick.getXButton()) {
+			shifter.toggleGear();
+		}
 	}
 	
 	public void autonomousPeriodic() {
 		System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
+		System.out.println(firstEncoder.getDistance() + " , " + secondEncoder.getDistance());
 		/*
 		//to run motor for a distance:
-		if(firstEncoder.getCount() < firstEncoder.findNumberOfCounts(firstEncoder.findDistancePerPulse(), 12)) {
+		if(firstEncoder.getDistance() < 12) {
 			sparkTest.set(0.7);
 		}
 		else {
 			sparkTest.set(0);
 		}
 		*/
-		if(secondEncoder.getCount() > -(secondEncoder.findNumberOfCounts(secondEncoder.findDistancePerPulse(), 12))) {
-			secondMotor.set(0.7);
+		if(secondEncoder.getDistance() < 12) {
+			secondMotor.set(-0.7);
 		}
 		else {
 			secondMotor.set(0);
 		}
 	}
-	
 }
