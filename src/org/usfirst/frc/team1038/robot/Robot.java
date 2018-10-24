@@ -10,10 +10,13 @@ package org.usfirst.frc.team1038.robot;
 import java.util.concurrent.TimeUnit;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 
@@ -43,6 +46,11 @@ public class Robot extends IterativeRobot {
 	
 	private DoubleSolenoid ligmoid;
 
+	private DigitalInput finger;
+	
+	private Servo servo; //out of bad names
+	
+	private Relay relay;
 	/**
 	 * This function is run when the robot is first started up and should be used
 	 * for any initialization code.
@@ -58,6 +66,9 @@ public class Robot extends IterativeRobot {
 		encodeman = new Encoder(2,3);
 		encodeman.reset();
 		ligmoid = new DoubleSolenoid(0,1);
+		finger = new DigitalInput(8); // IO PORT 9, not PWM 9
+		servo = new Servo(9); // PWM PORT 9, not IO 9
+		relay = new Relay(0); //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 		
 
 	}
@@ -134,6 +145,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		System.out.println(finger.get());
 		if (!sticc.getRawButton(1)) {
 			spade.set(sticc.getX()*1);
 			spade2.set(sticc.getZ()*1);
@@ -151,7 +163,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		try {
+		/*try {
 		ligmoid.set(DoubleSolenoid.Value.kForward);
 		ligmoid.wait(10);
 		ligmoid.set(DoubleSolenoid.Value.kReverse);
@@ -159,7 +171,25 @@ public class Robot extends IterativeRobot {
 		ligmoid.setName("jeff");
 		} catch (Exception minecraft) {
 			;;;;;;;;;;
-		}
+		}*/
+		
+		
+		spade2.set(finger.get() ? -0.4 : 0.4);
+		System.out.println(finger.get());
+		
+		servo.set((sticc.getX()/2)+0.5);
+		System.out.println((sticc.getX()/2)+0.5);
+		if (sticc.getRawButton(0)) // X
+			relay.set(Relay.Value.kOff);
+		if (sticc.getRawButton(1)) // A
+			relay.set(Relay.Value.kOn);
+		if (sticc.getRawButton(2)) // B
+			relay.set(Relay.Value.kForward);
+		if (sticc.getRawButton(3)) // Y
+			relay.set(Relay.Value.kReverse);
+			
+		
+		
 	}
 
 	public double bool2dub(boolean b) {
