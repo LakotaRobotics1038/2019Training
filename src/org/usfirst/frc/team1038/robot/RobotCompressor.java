@@ -5,13 +5,8 @@ import edu.wpi.first.wpilibj.SensorBase;
 
 public class RobotCompressor extends Compressor {
 	
-	RobotCompressor airCompressor = new RobotCompressor();
-	
-	public RobotCompressor() {
+	public RobotCompressor(int module) {
 		super(SensorBase.getDefaultSolenoidModule());
 	}
-	
-	airCompressor.setClosedLoopControl(true);
-	
 
 }

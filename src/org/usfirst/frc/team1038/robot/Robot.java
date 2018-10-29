@@ -31,6 +31,7 @@ public class Robot extends IterativeRobot {
 	TestingThatThing secondMotor;
 	RobotEncoder firstEncoder;
 	RobotEncoder secondEncoder;
+	RobotCompressor airCompressor;
 	
 	public void robotInit() {
 		sparkTest = new TestingThatThing(0);
@@ -38,13 +39,16 @@ public class Robot extends IterativeRobot {
 		secondMotor = new TestingThatThing(1);
 		firstEncoder = new RobotEncoder(0 , 1 , 207 , 6);
 		secondEncoder = new RobotEncoder(2 , 3 , 207 , 6);
-		
+		airCompressor = new RobotCompressor(0);
 	}
 	
 	public void teleopPeriodic() {
 		sparkTest.set(firstJoystick.getLeftJoystickVertical() * .5);
 		secondMotor.set(firstJoystick.getRightJoystickVertical() * .5);
 		//System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
+		if(firstJoystick.getYButton()) {
+			airCompressor.start();
+		}
 		if (firstJoystick.getXButton()) {
 			shifter.toggleGear();
 		}
