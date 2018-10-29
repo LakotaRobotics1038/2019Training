@@ -173,10 +173,11 @@ public class Robot extends IterativeRobot {
 			;;;;;;;;;;
 		}*/
 		
+		// set motor by limit switch
+		/*spade2.set(finger.get() ? -0.4 : 0.4);
+		System.out.println(finger.get());*/
 		
-		spade2.set(finger.get() ? -0.4 : 0.4);
-		System.out.println(finger.get());
-		
+		// turn on light (press between X and B)
 		servo.set((sticc.getX()/2)+0.5);
 		System.out.println((sticc.getX()/2)+0.5);
 		if (sticc.getRawButton(0)) // X
