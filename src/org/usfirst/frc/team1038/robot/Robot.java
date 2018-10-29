@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team1038.robot;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -37,6 +38,7 @@ public class Robot extends IterativeRobot {
 	public static final double COUNTS_PER_REV = 207;
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
+	private boolean compressorOn;
 
 	private Spark spade, spade2;
 
@@ -51,6 +53,8 @@ public class Robot extends IterativeRobot {
 	private Servo servo; //out of bad names
 	
 	private Relay relay;
+	
+	private Compressor comprende;
 	/**
 	 * This function is run when the robot is first started up and should be used
 	 * for any initialization code.
@@ -65,10 +69,12 @@ public class Robot extends IterativeRobot {
 		sticc = new Joystick(0);
 		encodeman = new Encoder(2,3);
 		encodeman.reset();
-		ligmoid = new DoubleSolenoid(0,1);
+		ligmoid = new DoubleSolenoid(2,3);
 		finger = new DigitalInput(8); // IO PORT 9, not PWM 9
 		servo = new Servo(9); // PWM PORT 9, not IO 9
 		relay = new Relay(0); //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		comprende = new Compressor(0); // compre d lkjdljkjdljksjldkjlksjdlkj
+		compressorOn = false;
 		
 
 	}
@@ -163,22 +169,48 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		/*try {
-		ligmoid.set(DoubleSolenoid.Value.kForward);
-		ligmoid.wait(10);
-		ligmoid.set(DoubleSolenoid.Value.kReverse);
-		ligmoid.wait(10);
-		ligmoid.setName("jeff");
+		System.out.println(comprende.enabled());
+		try {
+			if (sticc.getRawButton(1)) // X
+				ligmoid.set(DoubleSolenoid.Value.kOff);
+			if (sticc.getRawButton(2)) {// A
+				if (compressorOn)
+					comprende.start();
+				else
+					comprende.stop();
+				compressorOn = !compressorOn;
+				while (sticc.getRawButton(1)) {
+					; // let go of the button you gamer
+					//also this code might not work
+				}
+			}
+			if (sticc.getRawButton(3)) // B
+				ligmoid.set(DoubleSolenoid.Value.kForward);
+			if (sticc.getRawButton(4)) // Y
+				ligmoid.set(DoubleSolenoid.Value.kReverse);
+			if (sticc.getRawButton(5)) // LB
+				
+					{ligmoid.set(DoubleSolenoid.Value.kForward);
+					try{Thread.sleep(30);}catch(Exception p) {;}
+					ligmoid.set(DoubleSolenoid.Value.kReverse);
+					try{Thread.sleep(30);}catch(Exception p) {;}
+					System.out.println("RELEASING THE KRAKEN");} // compressor people be like BBBBRRRRRRRRRRRRRRRRRRRR
+				
 		} catch (Exception minecraft) {
 			;;;;;;;;;;
-		}*/
+		}
+		
+		/*relay.set(Relay.Value.kOn);
+		try{Thread.sleep(3);}catch(Exception p) {;}
+		relay.set(Relay.Value.kForward);
+		try{Thread.sleep(3);}catch(Exception p) {;}*/ // big loud clicker
 		
 		// set motor by limit switch
 		/*spade2.set(finger.get() ? -0.4 : 0.4);
 		System.out.println(finger.get());*/
 		
 		// turn on light (press between X and B)
-		servo.set((sticc.getX()/2)+0.5);
+		/*servo.set((sticc.getX()/2)+0.5);
 		System.out.println((sticc.getX()/2)+0.5);
 		if (sticc.getRawButton(0)) // X
 			relay.set(Relay.Value.kOff);
@@ -187,7 +219,31 @@ public class Robot extends IterativeRobot {
 		if (sticc.getRawButton(2)) // B
 			relay.set(Relay.Value.kForward);
 		if (sticc.getRawButton(3)) // Y
-			relay.set(Relay.Value.kReverse);
+			relay.set(Relay.Value.kReverse);*/
+		
+		
+		//long[] delays = {400,400,400,66*4,33*4,400,66*4,33*4,400}; // star wars thing
+		/*ArrayList<Long> delaybs = new ArrayList<Long>(300);
+		for (int i=200;i>0;i--) {
+			delaybs.add((long)i);
+		} */
+		// brapp
+		/*Object[] delays = delaybs.toArray();
+		for (int i=0; i<delays.length; i++) {
+			relay.set(Relay.Value.kOn);
+			try{Thread.sleep(6);}catch(Exception p) {;}
+			relay.set(Relay.Value.kForward);
+			try{Thread.sleep((long)delays[i]);}catch(Exception p) {;}
+		}
+		System.exit(9899899889);*/
+		
+		
+		
+		
+		
+		
+		
+		
 			
 		
 		
