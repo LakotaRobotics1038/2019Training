@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Compressor;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,13 +26,14 @@ public class Robot extends IterativeRobot {
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	private RobotPneumatics shifter = new RobotPneumatics(2, 3);
+	private RobotPneumatics PTOShifter = new RobotPneumatics(0, 1);
 	
 	TestingThatThing sparkTest;
 	JoystickCourtney firstJoystick;
 	TestingThatThing secondMotor;
 	RobotEncoder firstEncoder;
 	RobotEncoder secondEncoder;
-	RobotCompressor airCompressor;
+	Compressor airCompressor;
 	
 	public void robotInit() {
 		sparkTest = new TestingThatThing(0);
@@ -39,25 +41,31 @@ public class Robot extends IterativeRobot {
 		secondMotor = new TestingThatThing(1);
 		firstEncoder = new RobotEncoder(0 , 1 , 207 , 6);
 		secondEncoder = new RobotEncoder(2 , 3 , 207 , 6);
-		airCompressor = new RobotCompressor(0);
+		airCompressor = new Compressor(0);
+		//airCompressor.setClosedLoopControl(true);
 	}
 	
 	public void teleopPeriodic() {
 		sparkTest.set(firstJoystick.getLeftJoystickVertical() * .5);
 		secondMotor.set(firstJoystick.getRightJoystickVertical() * .5);
-		//System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
-		if(firstJoystick.getYButton()) {
-			airCompressor.start();
+		System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
+		if(firstJoystick.getXButton()) {
+			shifter.highGear();
 		}
-		if (firstJoystick.getXButton()) {
-			shifter.toggleGear();
+		if(firstJoystick.getYButton()) {
+			shifter.lowGear();
+		}
+		if(firstJoystick.getAButton()) {
+			PTOShifter.PTOOn();
+		}
+		if(firstJoystick.getBButton()) {
+			PTOShifter.PTOOff();
 		}
 	}
 	
 	public void autonomousPeriodic() {
 		System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
 		System.out.println(firstEncoder.getDistance() + " , " + secondEncoder.getDistance());
-		/*
 		//to run motor for a distance:
 		if(firstEncoder.getDistance() < 12) {
 			sparkTest.set(0.7);
@@ -65,7 +73,6 @@ public class Robot extends IterativeRobot {
 		else {
 			sparkTest.set(0);
 		}
-		*/
 		if(secondEncoder.getDistance() < 12) {
 			secondMotor.set(-0.7);
 		}
