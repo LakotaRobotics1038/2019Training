@@ -38,8 +38,8 @@ public class Robot extends IterativeRobot {
 	public static final double COUNTS_PER_REV = 207;
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
-	private boolean compressorOn;
 	private int currentSolenoid;
+	private boolean buttonPressed;
 
 	private Spark spade, spade2;
 
@@ -57,7 +57,7 @@ public class Robot extends IterativeRobot {
 	
 	private Relay relay;
 	
-	private Compressor comprende;
+	public Compressor comprende = new Compressor(0); // compre d is public
 	/**
 	 * This function is run when the robot is first started up and should be used
 	 * for any initialization code.
@@ -77,14 +77,12 @@ public class Robot extends IterativeRobot {
 		ligmoid3 = new DoubleSolenoid(6,7); // I don't know what port solenoid engages the wheel gear
 		*/
 		ligmoids = new ArrayList<DoubleSolenoid>(0);
-		for (int i=0; i<7; i+=2) {
+		for (int i=0; i<3; i+=2) {
 			ligmoids.add(new DoubleSolenoid(i,i+1));
 		}
 		finger = new DigitalInput(8); // IO PORT 9, not PWM 9
 		servo = new Servo(9); // PWM PORT 9, not IO 9
 		relay = new Relay(0); //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-		comprende = new Compressor(0); // compre d lkjdljkjdljksjldkjlksjdlkj
-		compressorOn = false;
 		comprende.setClosedLoopControl(true);
 		currentSolenoid = 1;
 		
@@ -163,29 +161,43 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		System.out.println(finger.get());
-		if (!sticc.getRawButton(1)) {
+		//System.out.println(finger.get());
+		//if (!sticc.getRawButton(1)) {
 			spade.set(sticc.getX()*1);
 			spade2.set(sticc.getZ()*1);
-		} else {
-			spade.set(Math.sin(System.currentTimeMillis()*0.01)*0.5);
-			spade2.set(Math.cos(System.currentTimeMillis()*0.01)*0.5);
+		//} else {
+		//	spade.set(Math.sin(System.currentTimeMillis()*0.01)*0.5);
+		//	spade2.set(Math.cos(System.currentTimeMillis()*0.01)*0.5);
+		//}
+		//System.out.println(encodeman.get());     // MOVING THE GEARS!!!! MOVING THE GEARS!!!!!
+		
+		
+		////// VVVVVVVVVVVVV COMPRESSOR STUFF (testPeriodic DOES NOT WORK)
+		
+		
+		
+		System.out.println("Current Solenoid: " + (int)(currentSolenoid+.5f) + " -- Press X to change");
+		System.out.print("                                                      Solenoid States:  ");
+		
+		for (int sol=0; sol<ligmoids.size(); sol++) {
+			System.out.print("" + sol + ":" + ligmoids.get(sol).get() + ",  ");
 		}
-		System.out.println(encodeman.get());
-
-	}
-	
-
-	/**
-	 * This function is called periodically during test mode.
-	 */
-	@Override
-	public void testPeriodic() {
-		System.out.println("Current Solenoid: " + currentSolenoid + " -- Press X to change");
+		System.out.println(".");
 		try {
-			DoubleSolenoid ligmoid = ligmoids.get(currentSolenoid);
+			if ((int)(currentSolenoid+.5f) >= ligmoids.size())
+				currentSolenoid = currentSolenoid - 4;
+			
+			DoubleSolenoid ligmoid = ligmoids.get((int)(currentSolenoid+.5f));
 			if (sticc.getRawButton(1)) // X
-				currentSolenoid = (currentSolenoid + 1) % ligmoids.size();
+				if (!buttonPressed) {
+					currentSolenoid = (currentSolenoid + 1) % ligmoids.size();
+					System.out.println("Changed solenoid to Solenoid " + currentSolenoid);
+					buttonPressed = true;
+				}
+			if (!sticc.getRawButton(1)) // if X is NOT pressed
+				if (buttonPressed) {
+					buttonPressed = false;
+				}
 			if (sticc.getRawButton(2)) {// A
 				ligmoid.set(DoubleSolenoid.Value.kForward);
 				
@@ -194,21 +206,8 @@ public class Robot extends IterativeRobot {
 				ligmoid.set(DoubleSolenoid.Value.kReverse);
 			if (sticc.getRawButton(4)) // Y
 				ligmoid.set(DoubleSolenoid.Value.kOff);
-			if (sticc.getRawButton(5)) // LB
-				
-					{ligmoids.get(1).set(DoubleSolenoid.Value.kForward);
-					try{Thread.sleep(15);}catch(Exception p) {;}
-					ligmoids.get(2).set(DoubleSolenoid.Value.kReverse);
-					
-					try{Thread.sleep(15);}catch(Exception p) {;}
-					ligmoids.get(1).set(DoubleSolenoid.Value.kReverse);
-					try{Thread.sleep(15);}catch(Exception p) {;}
-					ligmoids.get(2).set(DoubleSolenoid.Value.kForward);
-					try{Thread.sleep(15);}catch(Exception p) {;}
-					System.out.println("RELEASING THE KRAKEN");} // compressor people be like BBBBRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
-				
 		} catch (Exception minecraft) {
-			;;;;;;;;;;
+			throw minecraft;
 		}
 		
 		/*relay.set(Relay.Value.kOn);
@@ -248,23 +247,32 @@ public class Robot extends IterativeRobot {
 		}
 		System.exit(9899899889);*/
 		
+
+	}
+	
+
+	/**
+	 * This function is called periodically during test mode.
+	 */
+
+	
+	
+	@Override
+	public void testPeriodic() {
 		
 		
 		
 		
 		
 		
+		          System.out.println("why are you in test lol");
 		
 			
 		
 		
 	}
 
-	public double bool2dub(boolean b) {
-		if (b)
-			return 0.4;
-		return -0.4;
-	}
+
 	
 	//return same unit as you put wheel diam lmao xdddddddd
 	public double getDist(double countsPerRev, double wheelDiam, int totalCounts) {
