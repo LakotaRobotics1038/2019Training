@@ -39,6 +39,7 @@ public class Robot extends IterativeRobot {
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	private boolean compressorOn;
+	private int currentSolenoid;
 
 	private Spark spade, spade2;
 
@@ -46,8 +47,9 @@ public class Robot extends IterativeRobot {
 	
 	private Encoder encodeman;
 	
-	private DoubleSolenoid ligmoid;
-	private DoubleSolenoid ligmoid2;
+	/*private DoubleSolenoid ligmoid;
+	private DoubleSolenoid ligmoid2;*/
+	private ArrayList<DoubleSolenoid> ligmoids;
 	
 	private DigitalInput finger;
 	
@@ -70,13 +72,21 @@ public class Robot extends IterativeRobot {
 		sticc = new Joystick(0);
 		encodeman = new Encoder(2,3);
 		encodeman.reset();
-		ligmoid2 = new DoubleSolenoid(2,3);
+		/*ligmoid2 = new DoubleSolenoid(2,3);
 		ligmoid = new DoubleSolenoid(4,5); // I don't know what port solenoid engages the wheel gear
+		ligmoid3 = new DoubleSolenoid(6,7); // I don't know what port solenoid engages the wheel gear
+		*/
+		ligmoids = new ArrayList<DoubleSolenoid>(0);
+		for (int i=0; i<7; i+=2) {
+			ligmoids.add(new DoubleSolenoid(i,i+1));
+		}
 		finger = new DigitalInput(8); // IO PORT 9, not PWM 9
 		servo = new Servo(9); // PWM PORT 9, not IO 9
 		relay = new Relay(0); //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 		comprende = new Compressor(0); // compre d lkjdljkjdljksjldkjlksjdlkj
 		compressorOn = false;
+		comprende.setClosedLoopControl(true);
+		currentSolenoid = 1;
 		
 
 	}
@@ -171,35 +181,29 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		System.out.println(comprende.enabled());
+		System.out.println("Current Solenoid: " + currentSolenoid + " -- Press X to change");
 		try {
+			DoubleSolenoid ligmoid = ligmoids.get(currentSolenoid);
 			if (sticc.getRawButton(1)) // X
-				ligmoid.set(DoubleSolenoid.Value.kOff);
+				currentSolenoid = (currentSolenoid + 1) % ligmoids.size();
 			if (sticc.getRawButton(2)) {// A
-				if (compressorOn)
-					comprende.start();
-				else
-					comprende.stop();
-				compressorOn = !compressorOn;
-				while (sticc.getRawButton(1)) {
-					; // let go of the button you gamer
-					//also this code might not work
-				}
+				ligmoid.set(DoubleSolenoid.Value.kForward);
+				
 			}
 			if (sticc.getRawButton(3)) // B
-				ligmoid.set(DoubleSolenoid.Value.kForward);
-			if (sticc.getRawButton(4)) // Y
 				ligmoid.set(DoubleSolenoid.Value.kReverse);
+			if (sticc.getRawButton(4)) // Y
+				ligmoid.set(DoubleSolenoid.Value.kOff);
 			if (sticc.getRawButton(5)) // LB
 				
-					{ligmoid.set(DoubleSolenoid.Value.kForward);
+					{ligmoids.get(1).set(DoubleSolenoid.Value.kForward);
 					try{Thread.sleep(15);}catch(Exception p) {;}
-					ligmoid2.set(DoubleSolenoid.Value.kReverse);
+					ligmoids.get(2).set(DoubleSolenoid.Value.kReverse);
 					
 					try{Thread.sleep(15);}catch(Exception p) {;}
-					ligmoid.set(DoubleSolenoid.Value.kReverse);
+					ligmoids.get(1).set(DoubleSolenoid.Value.kReverse);
 					try{Thread.sleep(15);}catch(Exception p) {;}
-					ligmoid2.set(DoubleSolenoid.Value.kForward);
+					ligmoids.get(2).set(DoubleSolenoid.Value.kForward);
 					try{Thread.sleep(15);}catch(Exception p) {;}
 					System.out.println("RELEASING THE KRAKEN");} // compressor people be like BBBBRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 				
