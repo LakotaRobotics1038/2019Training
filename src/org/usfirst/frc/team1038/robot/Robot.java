@@ -47,7 +47,8 @@ public class Robot extends IterativeRobot {
 	private Encoder encodeman;
 	
 	private DoubleSolenoid ligmoid;
-
+	private DoubleSolenoid ligmoid2;
+	
 	private DigitalInput finger;
 	
 	private Servo servo; //out of bad names
@@ -69,7 +70,8 @@ public class Robot extends IterativeRobot {
 		sticc = new Joystick(0);
 		encodeman = new Encoder(2,3);
 		encodeman.reset();
-		ligmoid = new DoubleSolenoid(2,3);
+		ligmoid2 = new DoubleSolenoid(2,3);
+		ligmoid = new DoubleSolenoid(4,5); // I don't know what port solenoid engages the wheel gear
 		finger = new DigitalInput(8); // IO PORT 9, not PWM 9
 		servo = new Servo(9); // PWM PORT 9, not IO 9
 		relay = new Relay(0); //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -191,10 +193,15 @@ public class Robot extends IterativeRobot {
 			if (sticc.getRawButton(5)) // LB
 				
 					{ligmoid.set(DoubleSolenoid.Value.kForward);
-					try{Thread.sleep(30);}catch(Exception p) {;}
+					try{Thread.sleep(15);}catch(Exception p) {;}
+					ligmoid2.set(DoubleSolenoid.Value.kReverse);
+					
+					try{Thread.sleep(15);}catch(Exception p) {;}
 					ligmoid.set(DoubleSolenoid.Value.kReverse);
-					try{Thread.sleep(30);}catch(Exception p) {;}
-					System.out.println("RELEASING THE KRAKEN");} // compressor people be like BBBBRRRRRRRRRRRRRRRRRRRR
+					try{Thread.sleep(15);}catch(Exception p) {;}
+					ligmoid2.set(DoubleSolenoid.Value.kForward);
+					try{Thread.sleep(15);}catch(Exception p) {;}
+					System.out.println("RELEASING THE KRAKEN");} // compressor people be like BBBBRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 				
 		} catch (Exception minecraft) {
 			;;;;;;;;;;
@@ -227,7 +234,7 @@ public class Robot extends IterativeRobot {
 		for (int i=200;i>0;i--) {
 			delaybs.add((long)i);
 		} */
-		// brapp
+		
 		/*Object[] delays = delaybs.toArray();
 		for (int i=0; i<delays.length; i++) {
 			relay.set(Relay.Value.kOn);
