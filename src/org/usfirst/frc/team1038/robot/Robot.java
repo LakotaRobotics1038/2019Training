@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package org.usfirst.frc.team1038.robot;
+package edu.wpi.first.wpilibj;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -22,8 +23,12 @@ import edu.wpi.first.wpilibj.Spark;
 
 public class Robot extends IterativeRobot {
 
-    Spark left;
+    private static final int LOW = 0;
+	private static final String INPUT = null;
+	Spark left;
     Spark right;
+    EncoderClass Encoder1;
+    EncoderClass Encoder2;
     Joystick j;
     Relay on;
     Relay off;
@@ -40,7 +45,19 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
-
+		System.out.println(Encoder1.getCount() + " , " + Encoder2.getCount());
+		if(Encoder1.getDistance() < 12) {
+			left.set(1);
+		}
+		else {
+			left.set(0);
+		}
+		if(Encoder2.getDistance() < 12) {
+			right.set(1);
+		}
+		else {
+			right.set(0);
+		}
     }
 
     /**
@@ -55,8 +72,8 @@ public class Robot extends IterativeRobot {
     /**
      * This function is called periodically during test mode
      */
-    public void testPeriodic() {
-
+    public void testPeriodic() { 
+		
+	}
     }
 
-}
