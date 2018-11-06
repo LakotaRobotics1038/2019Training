@@ -7,11 +7,9 @@
 
 package org.usfirst.frc.team1038.robot;
 
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,6 +20,27 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 	
-Spark sparkTest;
+SparkTest1038 sparkTest;
 Joystick1038 firstJoystick;
+Spark secondMotor;
+Joystick1038 secondJoystick;
+
+
+public void robotInit() {
+	sparkTest = new SparkTest1038(0);
+	firstJoystick = new Joystick1038(0);
+	secondMotor = new SparkTest1038(1);
+}
+
+public void teleopPeridoic() {
+	if(firstJoystick.getBButton()) {
+		sparkTest.set(0.7);
+	}
+	if(secondJoystick.getBButton()) {
+		sparkTest.set(0.7);
+	}
+
+}
+
+
 }
