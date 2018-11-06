@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package org.usfirst.frc.team1038.robot;
+package org.usfirst.frc.team1038.robot2;
 
 import edu.wpi.first.wpilibj.BestJoystick;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -28,6 +28,7 @@ public class Robot2 extends IterativeRobot {
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	
 	Spark2 sparkmotor;
+	Joystick2 joystick1;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -39,6 +40,7 @@ public class Robot2 extends IterativeRobot {
 		m_chooser.addObject("My Auto", kCustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
 		sparkmotor = new Spark2(0);
+		joystick1 = new Joystick2(0);
 
 	}
 
@@ -67,7 +69,7 @@ public class Robot2 extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		
-    sparkmotor.motorsgo();
+    sparkmotor.motorsgo(joystick1.getLeftJoystickHorizontal());
 		
 		}
 
