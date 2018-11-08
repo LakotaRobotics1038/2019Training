@@ -20,26 +20,41 @@ import edu.wpi.first.wpilibj.Spark;
  */
 public class Robot extends IterativeRobot {
 	
-SparkTest1038 sparkTest;
-Joystick1038 firstJoystick;
-Spark secondMotor;
-Joystick1038 secondJoystick;
+Spark left = new SparkTest1038(0);
+Joystick1038 firstJoystick = new Joystick1038(0); 
+Spark right = new SparkTest1038(1);
+//Joystick1038 secondJoystick;
+
 
 
 public void robotInit() {
-	sparkTest = new SparkTest1038(0);
-	firstJoystick = new Joystick1038(0);
-	secondMotor = new SparkTest1038(1);
+
 }
 
 public void teleopPeridoic() {
-	if(firstJoystick.getBButton()) {
-		sparkTest.set(0.7);
-	}
-	if(secondJoystick.getBButton()) {
-		sparkTest.set(0.7);
-	}
+		left.set(firstJoystick.getLeftJoystickVertical() * .5);
+		right.set(firstJoystick.getRightJoystickVertical() * .5);
 
+        left.set(firstJoystick.getRawAxis(1));
+        right.set(firstJoystick.getRawAxis(3));
+
+
+
+}
+public void autonomousPeriodic() {
+	System.out.println(Encoder1.getCount() + " , " + Encoder2.getCount());
+	if(Encoder1.getDistance() < 12) {
+		left.set(1);
+	}
+	else {
+		left.set(0);
+	}
+	if(Encoder2.getDistance() < 12) {
+		right.set(1);
+	}
+	else {
+		right.set(0);
+	}
 }
 
 
