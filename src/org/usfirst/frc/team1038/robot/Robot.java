@@ -42,7 +42,7 @@ public class Robot extends IterativeRobot {
 		firstEncoder = new RobotEncoder(0 , 1 , 207 , 6);
 		secondEncoder = new RobotEncoder(2 , 3 , 207 , 6);
 		airCompressor = new Compressor(0);
-		//airCompressor.setClosedLoopControl(true);
+		airCompressor.setClosedLoopControl(true);
 	}
 	
 	public void teleopPeriodic() {
@@ -67,6 +67,7 @@ public class Robot extends IterativeRobot {
 		System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
 		System.out.println(firstEncoder.getDistance() + " , " + secondEncoder.getDistance());
 		//to run motor for a distance:
+		/*
 		if(firstEncoder.getDistance() < 12) {
 			sparkTest.set(0.7);
 		}
@@ -79,5 +80,7 @@ public class Robot extends IterativeRobot {
 		else {
 			secondMotor.set(0);
 		}
+		*/
+		/*I need an object to call this on but idk what*/.addSequential(new RobotDriveStraight(2));
 	}
 }
