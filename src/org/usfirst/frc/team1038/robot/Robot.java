@@ -46,6 +46,7 @@ public class Robot extends IterativeRobot {
      */
     public void autonomousPeriodic() {
 		System.out.println(Encoder1.getCount() + " , " + Encoder2.getCount());
+		System.out.println(Encoder1.getDistance() + " , " + Encoder2.getDistance());
 		if(Encoder1.getDistance() < 12) {
 			left.set(1);
 		}
@@ -53,7 +54,7 @@ public class Robot extends IterativeRobot {
 			left.set(0);
 		}
 		if(Encoder2.getDistance() < 12) {
-			right.set(1);
+			right.set(-1);
 		}
 		else {
 			right.set(0);
