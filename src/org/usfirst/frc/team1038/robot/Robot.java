@@ -7,6 +7,8 @@
 
 package org.usfirst.frc.team1038.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
@@ -21,39 +23,58 @@ import edu.wpi.first.wpilibj.Spark;
 public class Robot extends IterativeRobot {
 	
 Spark left = new SparkTest1038(0);
-Joystick1038 firstJoystick = new Joystick1038(0); 
+Joystick firstJoystick = new Joystick1038(0); 
 Spark right = new SparkTest1038(1);
+RobotEncoder Encoder1;
+RobotEncoder Encoder2;
+//private RobotPneumatics shifter = new RobotPneumatics(2, 3);
+//private RobotPneumatics PTOShifter = new RobotPneumatics(0, 1);
+Compressor airCompressor;
 //Joystick1038 secondJoystick;
 
 
 
 public void robotInit() {
+	Encoder1 = new RobotEncoder(0 , 1 , 207 , 6);
+	Encoder2 = new RobotEncoder(2 , 3 , 207 , 6);
+
 
 }
 
 public void teleopPeridoic() {
-		left.set(firstJoystick.getLeftJoystickVertical() * .5);
-		right.set(firstJoystick.getRightJoystickVertical() * .5);
-
-        left.set(firstJoystick.getRawAxis(1));
-        right.set(firstJoystick.getRawAxis(3));
+//		left.set(firstJoystick.getLeftJoystickVertical() * .5);
+//		right.set(firstJoystick.getRightJoystickVertical() * .5);
+//
+//        left.set(firstJoystick.getRawAxis(1));
+//        right.set(firstJoystick.getRawAxis(3));
+    left.set(0.5*firstJoystick.getRawAxis(1));
+    right.set(0.5*firstJoystick.getRawAxis(3));
+    System.out.println(firstJoystick.getRawAxis(1));
+//        if(firstJoystick.getXButton()) {
+//			shifter.highGear();
+//		}
+//		if(firstJoystick.getYButton()) {
+//			shifter.lowGear();
+//		}
 
 
 
 }
+
+public void autonomousInit(){
+//	Encoder1.reset();
+//	Encoder2.reset();
+}
 public void autonomousPeriodic() {
 	System.out.println(Encoder1.getCount() + " , " + Encoder2.getCount());
-	if(Encoder1.getDistance() < 12) {
-		left.set(1);
-	}
-	else {
-		left.set(0);
-	}
-	if(Encoder2.getDistance() < 12) {
-		right.set(1);
+	
+	if(Encoder2.getDistance() < 2) {
+		right.set(-0.45);
+		left.set(-0.45);
 	}
 	else {
 		right.set(0);
+		left.set(0);
 	}
 }
 
