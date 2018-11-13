@@ -40,6 +40,11 @@ public class Robot extends IterativeRobot {
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	private int currentSolenoid;
 	private boolean buttonPressed;
+	private ArrayList<Double> errN, errT;
+	double kP = 4;
+	double kI = 0.002;
+	double kD = 0;
+	
 
 	private Spark spade, spade2;
 
@@ -84,6 +89,11 @@ public class Robot extends IterativeRobot {
 		servo = new Servo(9); // PWM PORT 9, not IO 9
 		relay = new Relay(0); //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 		comprende.setClosedLoopControl(true);
+		errN = new ArrayList<>(3);
+		errT = new ArrayList<>(3);
+
+		
+		
 		currentSolenoid = 1;
 		
 
@@ -145,12 +155,18 @@ public class Robot extends IterativeRobot {
 			System.out.println("h");
 		}*/
 		
-		double doDistance = 12;
-		if (Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())) >= doDistance)
-			spade2.set(-0);
-		else
-			spade2.set(-1*Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())-doDistance)/(doDistance*2)-.5);
-			
+		double doDistance = 120;
+		errT.add((double)System.currentTimeMillis());
+		errN.add(Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get()))-doDistance);
+		
+		double PIDt = PID.transform(kP, kI, kD, errN, errT);
+		spade2.set(PIDt);
+		System.out.println("" + encodeman.get() + ",   " + PIDt);
+		//if (Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())) >= doDistance)
+			//spade2.set(-0);
+		//else
+			//spade2.set(-1*Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())-doDistance)/(doDistance*2)-.5);
+		
 		
 		
 		
