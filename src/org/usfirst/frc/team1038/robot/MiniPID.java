@@ -210,21 +210,18 @@ public class MiniPID{
 	}  
 
 	private boolean bounded(double value, double min, double max){
-		// Note, this is an inclusive range. This is so tests like
-		// `bounded(constrain(0,0,1),0,1)` will return false.
-		// This is more helpful for determining edge-case behaviour
-		// than <= is.
+
 		return (min<value) && (value<max);
 	}
 
 	private void checkSigns(){
-		if(reversed){  // all values should be below zero
+		if(reversed){ 
 			if(P>0) P*=-1;
 			if(I>0) I*=-1;
 			if(D>0) D*=-1;
 			if(F>0) F*=-1;
 		}
-		else{  // all values should be above zero
+		else{  
 			if(P<0) P*=-1;
 			if(I<0) I*=-1;
 			if(D<0) D*=-1;

@@ -9,8 +9,8 @@ public class Joystick1038 extends Joystick {
 		// TODO Auto-generated constructor stub
 	}
 	//Button Locations
-	final static int X_BUTTON = 1;
-	final static int A_BUTTON = 2;
+	public final static int X_BUTTON = 1;
+	public final static int A_BUTTON = 2;
 	private final int B_BUTTON = 3;
 	private final int Y_BUTTON = 4;
 	private final int LEFT_BUTTON = 5;

@@ -8,6 +8,10 @@
 package org.usfirst.frc.team1038.robot;
 package edu.wpi.first.wpilibj;
 
+import org.usfirst.frc.team1038.robot.EncoderClass;
+import org.usfirst.frc.team1038.robot.Joystick1038;
+import org.usfirst.frc.team1038.robot.Wiring;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
