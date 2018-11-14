@@ -9,9 +9,9 @@ public class Joystick2 extends Joystick {
 		// TODO Auto-generated constructor stub
 	}
 	private final int Left_Horizontal = 0;
-	private final int Left_Side = 1;
+	private final int Left_Vertical = 1;
 	private final int Right_Horizontal = 2;
-	private final int Right_Side = 3;
+	private final int Right_Vertical = 3;
 	
 	public double getLeftJoystickHorizontal() {
 		
@@ -20,7 +20,7 @@ public class Joystick2 extends Joystick {
 		
 	public double getLeftJoysickVertical() {
 		
-		return getRawAxis(Left_Side);
+		return getRawAxis(Left_Vertical);
 	}
 	
 	public double getRightJoystickHorizontal() {
@@ -30,6 +30,6 @@ public class Joystick2 extends Joystick {
 	
 	public double getRightJoystickVertical() {
 		
-		return getRawAxis(Right_Side);
+		return getRawAxis(Right_Vertical);
 	}
 }

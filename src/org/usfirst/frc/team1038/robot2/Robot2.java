@@ -7,12 +7,7 @@
 
 package org.usfirst.frc.team1038.robot2;
 
-import edu.wpi.first.wpilibj.BestJoystick;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Joystick.AxisType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,10 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot2 extends IterativeRobot {
-	private static final String kDefaultAuto = "Default";
-	private static final String kCustomAuto = "My Auto";
-	private String m_autoSelected;
-	private SendableChooser<String> m_chooser = new SendableChooser<>();
+
 	
 	Spark2 sparkmotor;
 	Joystick2 joystick1;
@@ -36,42 +28,13 @@ public class Robot2 extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
-		SmartDashboard.putData("Auto choices", m_chooser);
 		sparkmotor = new Spark2(0);
 		joystick1 = new Joystick2(0);
 
 	}
-
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
-	 *
-	 * <p>You can add additional auto modes by adding additional comparisons to
-	 * the switch structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
-	 */
-	@Override
-	public void autonomousInit() {
-		m_autoSelected = m_chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Auto selected: " + m_autoSelected);
+	public void teleopInit() {
+		System.out.println("Is it working?");
 	}
-
-	/**
-	 * This function is called periodically during autonomous.
-	 */
-	@Override
-	public void autonomousPeriodic() {
-		
-    sparkmotor.motorsgo(joystick1.getLeftJoystickHorizontal());
-		
-		}
 
 	/**
 	 * This function is called periodically during operator control.
@@ -79,17 +42,18 @@ public class Robot2 extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() 
 	{
-
+		 sparkmotor.motorsgo(joystick1.getLeftJoystickHorizontal());
+		 System.out.println("Power: " + joystick1.getLeftJoystickHorizontal());
 		}
-	
 
 	/**
-	 * This function is called periodically during test mode.
+	 * This function is called periodically during autonomous.
 	 */
 	@Override
-	public void testPeriodic() {
-	
-	}
+	public void autonomousPeriodic() {
+		
+		
+		}
 
-	
+
 }
