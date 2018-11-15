@@ -28,17 +28,17 @@ public class Robot extends IterativeRobot {
 	private RobotPneumatics shifter = new RobotPneumatics(2, 3);
 	private RobotPneumatics PTOShifter = new RobotPneumatics(0, 1);
 	
-	TestingThatThing sparkTest;
+	RobotSparkMotor firstMotor;
 	JoystickCourtney firstJoystick;
-	TestingThatThing secondMotor;
+	RobotSparkMotor secondMotor;
 	RobotEncoder firstEncoder;
 	RobotEncoder secondEncoder;
 	Compressor airCompressor;
 	
 	public void robotInit() {
-		sparkTest = new TestingThatThing(0);
+		firstMotor = new RobotSparkMotor(0);
 		firstJoystick = new JoystickCourtney(0);
-		secondMotor = new TestingThatThing(1);
+		secondMotor = new RobotSparkMotor(1);
 		firstEncoder = new RobotEncoder(0 , 1 , 207 , 6);
 		secondEncoder = new RobotEncoder(2 , 3 , 207 , 6);
 		airCompressor = new Compressor(0);
@@ -46,7 +46,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void teleopPeriodic() {
-		sparkTest.set(firstJoystick.getLeftJoystickVertical() * .5);
+		firstMotor.set(firstJoystick.getLeftJoystickVertical() * .5);
 		secondMotor.set(firstJoystick.getRightJoystickVertical() * .5);
 		System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
 		if(firstJoystick.getXButton()) {
@@ -69,10 +69,10 @@ public class Robot extends IterativeRobot {
 		//to run motor for a distance:
 		/*
 		if(firstEncoder.getDistance() < 12) {
-			sparkTest.set(0.7);
+			firstMotor.set(0.7);
 		}
 		else {
-			sparkTest.set(0);
+			firstMotor.set(0);
 		}
 		if(secondEncoder.getDistance() < 12) {
 			secondMotor.set(-0.7);
