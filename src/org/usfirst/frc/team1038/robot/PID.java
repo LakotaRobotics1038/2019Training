@@ -5,6 +5,11 @@ import java.util.ArrayList;
 public class PID {
 
 	
+	// this class is now DEPRECATED
+	
+	
+	
+	
 	public static double transform(double kP, double kI, double kD, ArrayList<Double> errN, ArrayList<Double> errT) { //errN: errors, errT: times for each error
 		int errLen = errN.size();
 		if (errLen != errT.size() || errLen <3) {

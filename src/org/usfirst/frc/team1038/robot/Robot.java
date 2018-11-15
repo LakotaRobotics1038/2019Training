@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
-
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -46,7 +46,7 @@ public class Robot extends IterativeRobot {
 	double kD = 0;
 	
 
-	private Spark spade, spade2;
+	private Spark spaRK, spark2;
 
 	private Joystick sticc;
 	
@@ -62,6 +62,8 @@ public class Robot extends IterativeRobot {
 	
 	private Relay relay;
 	
+	private CommandGroup group;
+	
 	public Compressor comprende = new Compressor(0); // compre d is public
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -72,8 +74,8 @@ public class Robot extends IterativeRobot {
 		m_chooser.addDefault("Default Auto", kDefaultAuto);
 		m_chooser.addObject("My Auto", kCustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
-		spade = new Spark(0);
-		spade2 = new Spark(1); // make this into an array or something lol
+		spaRK = new Spark(0);
+		spark2 = new Spark(1); // make this into an array or something lol
 		sticc = new Joystick(0);
 		encodeman = new Encoder(2,3);
 		encodeman.reset();
@@ -92,7 +94,10 @@ public class Robot extends IterativeRobot {
 		errN = new ArrayList<>(3);
 		errT = new ArrayList<>(3);
 
+		encodeman.setDistancePerPulse(1/207.*6); // (1/207) circumferences per count * 6 inches per circumference
 		
+		group = new CommandGroup();
+		group.addSequential(new DrivePIDstyle(200,spaRK,encodeman));
 		
 		currentSolenoid = 1;
 		
@@ -122,9 +127,9 @@ public class Robot extends IterativeRobot {
 	public void moveDist(double dist, double speed) {
 		int curCounts = encodeman.get();
 		while (Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get()-curCounts)) < dist) {
-			spade2.set(speed);
+			spark2.set(speed);
 		}
-		spade2.set(0);
+		spark2.set(0);
 		
 	}
 	
@@ -146,7 +151,7 @@ public class Robot extends IterativeRobot {
 			// Put default auto code here
 			break;
 		}
-		System.out.println(encodeman.get());
+		System.out.println(encodeman.getDistance());
 		/*if (Math.abs(encodeman.get()) < 3000) {
 			spade2.set(-(encodeman.get()+4000)/7005.0);
 			System.out.println((encodeman.get()+100)/405.0);
@@ -155,18 +160,20 @@ public class Robot extends IterativeRobot {
 			System.out.println("h");
 		}*/
 		
-		double doDistance = 120;
+		/*double doDistance = 120;
 		errT.add((double)System.currentTimeMillis());
 		errN.add(Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get()))-doDistance);
 		
 		double PIDt = PID.transform(kP, kI, kD, errN, errT);
 		spade2.set(PIDt);
-		System.out.println("" + encodeman.get() + ",   " + PIDt);
+		System.out.println("" + encodeman.get() + ",   " + PIDt);*/ // pid class DEPRECATED so don't use it
 		//if (Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())) >= doDistance)
 			//spade2.set(-0);
 		//else
 			//spade2.set(-1*Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())-doDistance)/(doDistance*2)-.5);
 		
+		//if (!group.isRunning())
+			group.start();
 		
 		
 		
@@ -179,8 +186,8 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		//System.out.println(finger.get());
 		//if (!sticc.getRawButton(1)) {
-			spade.set(sticc.getX()*1);
-			spade2.set(sticc.getZ()*1);
+			spaRK.set(sticc.getX()*1);
+			spark2.set(sticc.getZ()*1);
 		//} else {
 		//	spade.set(Math.sin(System.currentTimeMillis()*0.01)*0.5);
 		//	spade2.set(Math.cos(System.currentTimeMillis()*0.01)*0.5);
