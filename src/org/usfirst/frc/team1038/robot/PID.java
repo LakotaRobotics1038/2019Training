@@ -3,9 +3,6 @@ package org.usfirst.frc.team1038.robot;
 import java.util.ArrayList;
 
 public class PID {
-
-	
-	// this class is now DEPRECATED
 	
 	
 	
@@ -21,7 +18,7 @@ public class PID {
 		
 
 		if (Math.abs(errN.get(errLen-1)) < fr)
-			return 0; // we are in the error bound, so let's pour up and drank
+			return 0; // we are in the error bound
 		
 		//sumErr
 		double sumErr = 0;
@@ -31,6 +28,7 @@ public class PID {
 		
 		//dErr
 		double dErr = (errN.get(errLen-1)-errN.get(errLen-2))/(errT.get(errLen-1)-errT.get(errLen-2));
+		
 		
 		return kP*errN.get(errLen-1) + kI*sumErr + kD*dErr; 
 	}	
