@@ -150,7 +150,7 @@ public class Robot extends IterativeRobot {
 		}
 		spark2.set(0);
 		
-		
+	
 	}
 	
 	public void teleopInit() {
