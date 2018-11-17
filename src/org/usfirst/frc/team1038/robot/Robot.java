@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.Scheduler; // end it
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -32,6 +33,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends IterativeRobot {
+	
+	
+	
+	
+	public static DriveTrain robotDrive = DriveTrain.getInstance(); // CLING WRAP
+	
+	
+	
 	private static final String kDefaultAuto = "Default";
 	private static final String kCustomAuto = "My Auto";
 	public static final double WHEEL_DIAM = 6;
@@ -63,6 +72,9 @@ public class Robot extends IterativeRobot {
 	private Relay relay;
 	
 	private CommandGroup group;
+	private Scheduler schedule;
+	
+	
 	
 	public Compressor comprende = new Compressor(0); // compre d is public
 	/**
@@ -95,9 +107,7 @@ public class Robot extends IterativeRobot {
 		errT = new ArrayList<>(3);
 
 		encodeman.setDistancePerPulse(1/207.*6); // (1/207) circumferences per count * 6 inches per circumference
-		
-		group = new CommandGroup();
-		group.addSequential(new DrivePIDstyle(200,spaRK,encodeman));
+
 		
 		currentSolenoid = 1;
 		
@@ -117,11 +127,20 @@ public class Robot extends IterativeRobot {
 	 * make sure to add them to the chooser code above as well.
 	 */
 	@Override
+	
 	public void autonomousInit() {
 		m_autoSelected = m_chooser.getSelected();
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
 		System.out.println("Auto selected: " + m_autoSelected);
+		encodeman.reset();
+		
+		
+		group = new CommandGroup();
+		group.addSequential(new DrivePIDstyle(200,spaRK,encodeman));
+		System.out.println("group.addSequential() executed");
+		schedule.add(group);
+		System.out.println("schedule.add() executed");
 	}
 	
 	public void moveDist(double dist, double speed) {
@@ -173,7 +192,8 @@ public class Robot extends IterativeRobot {
 			//spade2.set(-1*Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())-doDistance)/(doDistance*2)-.5);
 		
 		//if (!group.isRunning())
-			group.start();
+		group.start();
+		System.out.println("group.start() passed");
 		
 		
 		

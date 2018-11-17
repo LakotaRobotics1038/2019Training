@@ -28,16 +28,20 @@ public class DrivePIDstyle extends PIDCommand {
 		
 		jeb      =j;
 		eman     =e;
+		System.out.println("Dri]vePIDstyle constructor executed");
+		requires(Robot.robotDrive); // what
 		
 	}
 	
 	@Override // does this ting
 	public void initialize () {
 		eman.reset(); //gang
+		System.out.println("initialize() e xecuted");
 		
 	}
 
 	public void execute ()  {
+		System.out.println("execute() executed");
 		drivePID.enable();
 		usePIDOutput(drivePID.get());
 		
