@@ -41,22 +41,25 @@ public void robotInit() {
 
 }
 
-public void teleopPeridoic() {
-//		left.set(firstJoystick.getLeftJoystickVertical() * .5);
+public void teleopPeriodic() {
+//		left.set(firstJoystick.getLeftJoystickVertical() * -.5);
 //		right.set(firstJoystick.getRightJoystickVertical() * .5);
 //
 //        left.set(firstJoystick.getRawAxis(1));
-//        right.set(firstJoystick.getRawAxis(3));
-    left.set(0.5*firstJoystick.getRawAxis(1));
-    right.set(0.5*firstJoystick.getRawAxis(3));
-    System.out.println(firstJoystick.getRawAxis(1));
+        right.set(firstJoystick.getRawAxis(3));
+    left.set(-1*firstJoystick.getRawAxis(1));
+//    right.set(0.5);
+    System.out.println(firstJoystick.getRawAxis(3));
+    System.out.println(-1*firstJoystick.getRawAxis(1));
 //        if(firstJoystick.getXButton()) {
 //			shifter.highGear();
 //		}
 //		if(firstJoystick.getYButton()) {
 //			shifter.lowGear();
 //		}
-
+//	left = new Spark(Wiring.LEFT_MOTOR);
+//	right = new Spark(Wiring.RIGHT_MOTOR);
+//    firstJoystick = new Joystick(0);
 
 
 }
