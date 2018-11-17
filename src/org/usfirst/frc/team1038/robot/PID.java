@@ -10,12 +10,18 @@ public class PID {
 	
 	
 	
-	public static double transform(double kP, double kI, double kD, ArrayList<Double> errN, ArrayList<Double> errT) { //errN: errors, errT: times for each error
+	public static double transform(double kP, double kI, double kD, ArrayList<Double> errN, ArrayList<Double> errT, double fr) { //errN: errors, errT: times for each error, fr: threshold for acceptable error
+		
 		int errLen = errN.size();
+		
+		
 		if (errLen != errT.size() || errLen <3) {
 			return 0.5; // no
 		}
 		
+
+		if (Math.abs(errN.get(errLen-1)) < fr)
+			return 0; // we are in the error bound, so let's pour up and drank
 		
 		//sumErr
 		double sumErr = 0;
