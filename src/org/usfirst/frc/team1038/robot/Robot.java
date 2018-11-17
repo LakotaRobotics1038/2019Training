@@ -141,6 +141,7 @@ public class Robot extends IterativeRobot {
 		System.out.println("group.addSequential() executed");
 		schedule.add(group);
 		System.out.println("schedule.add() executed");
+		
 	}
 	
 	public void moveDist(double dist, double speed) {
@@ -193,8 +194,8 @@ public class Robot extends IterativeRobot {
 			//spade2.set(-1*Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())-doDistance)/(doDistance*2)-.5);
 		
 		//if (!group.isRunning())
-		group.start();
-		System.out.println("group.start() passed");
+		schedule.run();
+		System.out.println("schedule.run() passed");
 		
 		
 		
