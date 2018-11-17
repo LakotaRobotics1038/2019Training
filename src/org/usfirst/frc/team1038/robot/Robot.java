@@ -27,6 +27,7 @@ public class Robot extends IterativeRobot {
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	private RobotPneumatics shifter = new RobotPneumatics(2, 3);
 	private RobotPneumatics PTOShifter = new RobotPneumatics(0, 1);
+	static RobotSparkMotor emptySpark = new RobotSparkMotor(9);
 	
 	RobotSparkMotor firstMotor;
 	JoystickCourtney firstJoystick;
