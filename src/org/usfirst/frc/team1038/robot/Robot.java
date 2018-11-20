@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Compressor;
  * project.
  */
 public class Robot extends IterativeRobot {
+	
 	private static final String kDefaultAuto = "Default";
 	private static final String kCustomAuto = "My Auto";
 	private String m_autoSelected;
@@ -28,11 +29,12 @@ public class Robot extends IterativeRobot {
 	private RobotPneumatics shifter = new RobotPneumatics(2, 3);
 	private RobotPneumatics PTOShifter = new RobotPneumatics(0, 1);
 	static RobotSparkMotor emptySpark = new RobotSparkMotor(9);
+	public static RobotDriveTrain robotDriveTrain = RobotDriveTrain.getInstance();
 	
 	RobotSparkMotor firstMotor;
 	JoystickCourtney firstJoystick;
 	RobotSparkMotor secondMotor;
-	RobotEncoder firstEncoder;
+	public RobotEncoder firstEncoder;
 	RobotEncoder secondEncoder;
 	Compressor airCompressor;
 	

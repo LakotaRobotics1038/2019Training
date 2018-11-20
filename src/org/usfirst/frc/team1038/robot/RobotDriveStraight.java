@@ -3,6 +3,7 @@ package org.usfirst.frc.team1038.robot;
 import edu.wpi.first.wpilibj.command.PIDCommand;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.PIDController;
+import org.usfirst.frc.team1038.robot.Robot;
 
 public class RobotDriveStraight extends PIDCommand {
 	
@@ -24,27 +25,56 @@ public class RobotDriveStraight extends PIDCommand {
 	public RobotDriveStraight(double setpoint) {
 		super(dP, dI, dD);
 		setSetpoint(setpoint *12);
+		drivePID.setAbsoluteTolerance(tolerance);
+		drivePID.setOutputRange(-maxOutput, maxOutput);
+		drivePID.setContinuous(false);
+		turnPID.setAbsoluteTolerance(tolerance);
+		turnPID.setOutputRange(-maxOutput, maxOutput);
+		turnPID.setInputRange(0, 360);
+		turnPID.setContinuous(true);
+		requires(/*HEEEEELLLLLLLP*/);
+	}
+	
+	public void initialize() {
+		turnPID.setSetpoint(gyroSensor.getAngle());
+		driveTrain.resetEncoders();
 	}
 	
 	public void execute() {
 		drivePID.enable();
+		turnPID.enable();
+		double distancePID = drivePID.get();
+		double anglePID = turnPID.get();
+		usePIDOutput(distancePID, anglePID);
+	}
+	
+	public void interrupted() {
+		end();
+		System.out.println("DriveStraight interrupted");
 	}
 	
 	public void end() {
 		drivePID.reset();
+		turnPID.reset();
+		driveTrain.drive(stopDriveSpeed, stopDriveRotation);
+		System.out.println("DriveStraight ended");
 	}
 
 	@Override
+	protected boolean isFinished() {
+		return drivePID.onTarget() && turnPID.onTarget();
+	}
+	
+	@Override
 	protected double returnPIDInput() {
-		return 0;
+		return firstEncoder.getDistance();
 	}
 
 	@Override
 	protected void usePIDOutput(double output) {
 	}
-
-	@Override
-	protected boolean isFinished() {
-		return false;
+	
+	protected void usePIDOutput(double drivePower, double turnPower) {
+		driveTrain.dualArcadeDrive(drivePower, turnPower);
 	}
 }

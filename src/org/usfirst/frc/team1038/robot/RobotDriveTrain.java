@@ -23,7 +23,7 @@ public class RobotDriveTrain extends Subsystem {
 	RobotPneumatics shifter = new RobotPneumatics(2, 3);
 	RobotPneumatics PTOShifter = new RobotPneumatics(0, 1);
 	private DifferentialDrive differentialDrive;
-	private static RobotDriveTrain driveTrain;
+	static RobotDriveTrain driveTrain;
 	public enum driveModes { tankDrive, singleArcadeDrive, dualArcadeDrive };
 	public driveModes currentDriveMode = driveModes.dualArcadeDrive;
 	public driveModes prevDriveMode = currentDriveMode;
