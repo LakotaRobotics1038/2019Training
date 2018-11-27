@@ -6,6 +6,11 @@ import edu.wpi.first.wpilibj.hal.EncoderJNI;
 
 public class RobotEncoder extends Encoder {
 	
+	public static RobotEncoder getInstance() {
+		if (firstEncoder == null) {
+			
+		}
+	}
 	
 	public RobotEncoder(int channelA, int channelB, int countsPerRevolution, double wheelDiameter) {
 		super(channelA, channelB);

@@ -7,11 +7,11 @@
 
 package org.usfirst.frc.team1038.robot;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,24 +26,19 @@ public class Robot extends IterativeRobot {
 	private static final String kCustomAuto = "My Auto";
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
-	private RobotPneumatics shifter = new RobotPneumatics(2, 3);
-	private RobotPneumatics PTOShifter = new RobotPneumatics(0, 1);
 	static RobotSparkMotor emptySpark = new RobotSparkMotor(9);
 	public static RobotDriveTrain robotDriveTrain = RobotDriveTrain.getInstance();
+	public CommandGroup group = new CommandGroup();
 	
 	RobotSparkMotor firstMotor;
 	JoystickCourtney firstJoystick;
 	RobotSparkMotor secondMotor;
-	public RobotEncoder firstEncoder;
-	RobotEncoder secondEncoder;
 	Compressor airCompressor;
 	
 	public void robotInit() {
 		firstMotor = new RobotSparkMotor(0);
 		firstJoystick = new JoystickCourtney(0);
 		secondMotor = new RobotSparkMotor(1);
-		firstEncoder = new RobotEncoder(0 , 1 , 207 , 6);
-		secondEncoder = new RobotEncoder(2 , 3 , 207 , 6);
 		airCompressor = new Compressor(0);
 		airCompressor.setClosedLoopControl(true);
 	}
@@ -53,16 +48,16 @@ public class Robot extends IterativeRobot {
 		secondMotor.set(firstJoystick.getRightJoystickVertical() * .5);
 		System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
 		if(firstJoystick.getXButton()) {
-			shifter.highGear();
+			(RobotPneumatics.getFirstInstance()).highGear();
 		}
 		if(firstJoystick.getYButton()) {
-			shifter.lowGear();
+			(RobotPneumatics.getFirstInstance()).lowGear();
 		}
 		if(firstJoystick.getAButton()) {
-			PTOShifter.PTOOn();
+			(RobotPneumatics.getInstance()).PTOOn();
 		}
 		if(firstJoystick.getBButton()) {
-			PTOShifter.PTOOff();
+			(RobotPneumatics.getInstance()).PTOOff();
 		}
 	}
 	
@@ -84,6 +79,6 @@ public class Robot extends IterativeRobot {
 			secondMotor.set(0);
 		}
 		*/
-		/*I need an object to call this on but idk what*/.addSequential(new RobotDriveStraight(2));
+		group.addSequential(new RobotDriveStraight(2));
 	}
 }

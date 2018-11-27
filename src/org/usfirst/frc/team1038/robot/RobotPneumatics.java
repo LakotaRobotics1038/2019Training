@@ -7,6 +7,22 @@ public class RobotPneumatics extends DoubleSolenoid{
 
 	private boolean isHighGear = false;
 	private boolean isPTO = false;
+	static RobotPneumatics PTOshifter;
+	static RobotPneumatics shifter;
+	
+	public static RobotPneumatics getFirstInstance() {
+		if (shifter == null) {
+			PTOshifter = new RobotPneumatics(2, 3);
+		}
+		return shifter;
+	}
+	
+	public static RobotPneumatics getInstance() {
+		if (PTOshifter == null) {
+			PTOshifter = new RobotPneumatics(0, 1);
+		}
+		return PTOshifter;
+	}
 	
 	public RobotPneumatics(int forwardChannel, int reverseChannel) {
 		super(SensorBase.getDefaultSolenoidModule(), forwardChannel, reverseChannel);

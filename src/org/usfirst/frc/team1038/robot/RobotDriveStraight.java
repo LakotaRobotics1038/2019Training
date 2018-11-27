@@ -32,7 +32,7 @@ public class RobotDriveStraight extends PIDCommand {
 		turnPID.setOutputRange(-maxOutput, maxOutput);
 		turnPID.setInputRange(0, 360);
 		turnPID.setContinuous(true);
-		requires(/*HEEEEELLLLLLLP*/);
+		requires(Robot.robotDriveTrain);
 	}
 	
 	public void initialize() {
@@ -67,11 +67,12 @@ public class RobotDriveStraight extends PIDCommand {
 	
 	@Override
 	protected double returnPIDInput() {
-		return firstEncoder.getDistance();
+		return driveTrain.getRightDriveEncoderDistance();
 	}
 
 	@Override
 	protected void usePIDOutput(double output) {
+		usePIDOutput(output, turnPID.get());
 	}
 	
 	protected void usePIDOutput(double drivePower, double turnPower) {

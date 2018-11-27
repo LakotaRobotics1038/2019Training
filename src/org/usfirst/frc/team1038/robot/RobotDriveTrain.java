@@ -12,16 +12,16 @@ public class RobotDriveTrain extends Subsystem {
 	private final int secondEncoderPort2 = 4;
 	private final int countsPerRevolution = 205;
 	private final int wheelDiameter = 6;
-	RobotEncoder firstEncoder = new RobotEncoder(firstEncoderPort1, firstEncoderPort2, countsPerRevolution, wheelDiameter);
-	RobotEncoder secondEncoder = new RobotEncoder(secondEncoderPort1, secondEncoderPort2, countsPerRevolution, wheelDiameter);
+	public RobotEncoder firstEncoder = new RobotEncoder(firstEncoderPort1, firstEncoderPort2, countsPerRevolution, wheelDiameter);
+	public RobotEncoder secondEncoder = new RobotEncoder(secondEncoderPort1, secondEncoderPort2, countsPerRevolution, wheelDiameter);
 	private final int firstLeftMotorPort = 10;
 	private final int firstRightMotorPort = 12;
 	RobotSparkMotor firstLeftMotor = new RobotSparkMotor(firstLeftMotorPort);
 	RobotSparkMotor firstRightMotor = new RobotSparkMotor(firstRightMotorPort);
 	private boolean isHighGear = false;
 	private boolean isPTO = false;
-	RobotPneumatics shifter = new RobotPneumatics(2, 3);
-	RobotPneumatics PTOShifter = new RobotPneumatics(0, 1);
+	RobotPneumatics shifter = RobotPneumatics.getFirstInstance();
+	RobotPneumatics PTOshifter = RobotPneumatics.getInstance();	
 	private DifferentialDrive differentialDrive;
 	static RobotDriveTrain driveTrain;
 	public enum driveModes { tankDrive, singleArcadeDrive, dualArcadeDrive };
@@ -37,6 +37,22 @@ public class RobotDriveTrain extends Subsystem {
 	
 	public RobotDriveTrain() {
 		differentialDrive = new DifferentialDrive(firstLeftMotor, firstRightMotor);
+	}
+	
+	public int getLeftDriveEncoderCount() {
+		return firstEncoder.getCount();
+	}
+	
+	public int getRightDriveEncoderCount() {
+		return secondEncoder.getCount();
+	}
+	
+	public double getLeftDriveEncoderDistance() {
+		return firstEncoder.getDistance();
+	}
+	
+	public double getRightDriveEncoderDistance() {
+		return secondEncoder.getDistance();
 	}
 	
 	public void resetEncoders() {
@@ -92,12 +108,12 @@ public class RobotDriveTrain extends Subsystem {
 	
 	public void highGear() {
 		isHighGear = true;
-		shifter.set(DoubleSolenoid.Value.kForward);
+		(RobotPneumatics.getFirstInstance()).set(DoubleSolenoid.Value.kForward);
 	}
 	
 	public void lowGear() {
 		isHighGear = false;
-		shifter.set(DoubleSolenoid.Value.kReverse);
+		(RobotPneumatics.getFirstInstance()).set(DoubleSolenoid.Value.kReverse);
 	}
 	
 	public boolean isHighGear() {
@@ -106,12 +122,12 @@ public class RobotDriveTrain extends Subsystem {
 	
 	public void PTOOn() {
 		isPTO = true;
-		PTOShifter.set(DoubleSolenoid.Value.kForward);
+		(RobotPneumatics.getInstance()).set(DoubleSolenoid.Value.kForward);
 	}
 	
 	public void PTOOff() {
 		isPTO = false;
-		PTOShifter.set(DoubleSolenoid.Value.kReverse);
+		(RobotPneumatics.getInstance()).set(DoubleSolenoid.Value.kReverse);
 	}
 	
 	public boolean isPTO() {
