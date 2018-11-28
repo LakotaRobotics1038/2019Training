@@ -1,9 +1,10 @@
 package org.usfirst.frc.team1038.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 
 public class MyJoystick extends Joystick {
 
-		public Joystick(int port) {
+		public MyJoystick(int port) {
 			super(port);
 			// TODO Auto-generated constructor stub
 		}
