@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1038.robot;
 
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.PIDCommand;
 
 public class DriveStraight extends PIDCommand{
@@ -11,9 +12,12 @@ public class DriveStraight extends PIDCommand{
 	private PIDController drivePIDLeft = getPIDController();
 	private PIDController drivePIDRight = getPIDController();
 	private static final double endDriveSpeed = 0.0;
+	CommandGroup running;
 	
-	public DriveStraight() {
+	public DriveStraight(double setpoint) {
 		super(P, I, D);
+		drivePIDLeft.setSetpoint(setpoint);
+		drivePIDRight.setSetpoint(setpoint);
 		drivePIDLeft.setAbsoluteTolerance(0.2);
 		drivePIDLeft.setContinuous(false);
 		drivePIDRight.setAbsoluteTolerance(0.2);
