@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1038.robot;
 
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.PIDCommand;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.PIDController;
@@ -32,7 +33,7 @@ public class RobotDriveStraight extends PIDCommand {
 		turnPID.setOutputRange(-maxOutput, maxOutput);
 		turnPID.setInputRange(0, 360);
 		turnPID.setContinuous(true);
-		requires(Robot.robotDriveTrain);
+		requires(Robot.driveTrain);
 	}
 	
 	public void initialize() {

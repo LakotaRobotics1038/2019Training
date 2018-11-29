@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.Scheduler;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -27,20 +28,18 @@ public class Robot extends IterativeRobot {
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	static RobotSparkMotor emptySpark = new RobotSparkMotor(9);
-	public static RobotDriveTrain robotDriveTrain = RobotDriveTrain.getInstance();
-	public CommandGroup group = new CommandGroup();
-	
-	RobotSparkMotor firstMotor;
-	JoystickCourtney firstJoystick;
-	RobotSparkMotor secondMotor;
-	Compressor airCompressor;
+	public static RobotDriveTrain driveTrain = RobotDriveTrain.getInstance();
+	RobotEncoder firstEncoder = RobotEncoder.getInstance();
+	RobotEncoder secondEncoder = RobotEncoder.getFirstInstance();
+	RobotSparkMotor firstMotor = RobotSparkMotor.getInstance();
+	RobotSparkMotor secondMotor = RobotSparkMotor.getFirstInstance();
+	JoystickCourtney firstJoystick = new JoystickCourtney(0);
+	Compressor airCompressor = new Compressor(0);
+	Scheduler schedule = Scheduler.getInstance();
 	
 	public void robotInit() {
-		firstMotor = new RobotSparkMotor(0);
-		firstJoystick = new JoystickCourtney(0);
-		secondMotor = new RobotSparkMotor(1);
-		airCompressor = new Compressor(0);
 		airCompressor.setClosedLoopControl(true);
+		schedule.add(new RobotDriveStraight(2));
 	}
 	
 	public void teleopPeriodic() {
@@ -79,6 +78,8 @@ public class Robot extends IterativeRobot {
 			secondMotor.set(0);
 		}
 		*/
-		group.addSequential(new RobotDriveStraight(2));
+		if (schedule != null) {
+			schedule.run();
+		}
 	}
 }

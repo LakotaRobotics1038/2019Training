@@ -12,7 +12,7 @@ public class RobotPneumatics extends DoubleSolenoid{
 	
 	public static RobotPneumatics getFirstInstance() {
 		if (shifter == null) {
-			PTOshifter = new RobotPneumatics(2, 3);
+			shifter = new RobotPneumatics(2, 3);
 		}
 		return shifter;
 	}

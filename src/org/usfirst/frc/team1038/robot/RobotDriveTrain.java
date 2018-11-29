@@ -6,18 +6,10 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class RobotDriveTrain extends Subsystem {
 	
-	private final int firstEncoderPort1 = 0;
-	private final int firstEncoderPort2 = 1;
-	private final int secondEncoderPort1 = 3;
-	private final int secondEncoderPort2 = 4;
-	private final int countsPerRevolution = 205;
-	private final int wheelDiameter = 6;
-	public RobotEncoder firstEncoder = new RobotEncoder(firstEncoderPort1, firstEncoderPort2, countsPerRevolution, wheelDiameter);
-	public RobotEncoder secondEncoder = new RobotEncoder(secondEncoderPort1, secondEncoderPort2, countsPerRevolution, wheelDiameter);
-	private final int firstLeftMotorPort = 10;
-	private final int firstRightMotorPort = 12;
-	RobotSparkMotor firstLeftMotor = new RobotSparkMotor(firstLeftMotorPort);
-	RobotSparkMotor firstRightMotor = new RobotSparkMotor(firstRightMotorPort);
+	RobotEncoder firstEncoder = RobotEncoder.getInstance();
+	RobotEncoder secondEncoder = RobotEncoder.getFirstInstance();
+	RobotSparkMotor firstMotor = RobotSparkMotor.getInstance();
+	RobotSparkMotor secondMotor = RobotSparkMotor.getFirstInstance();
 	private boolean isHighGear = false;
 	private boolean isPTO = false;
 	RobotPneumatics shifter = RobotPneumatics.getFirstInstance();
@@ -36,7 +28,7 @@ public class RobotDriveTrain extends Subsystem {
 	}
 	
 	public RobotDriveTrain() {
-		differentialDrive = new DifferentialDrive(firstLeftMotor, firstRightMotor);
+		differentialDrive = new DifferentialDrive(firstMotor, secondMotor);
 	}
 	
 	public int getLeftDriveEncoderCount() {
@@ -89,7 +81,7 @@ public class RobotDriveTrain extends Subsystem {
 			differentialDrive.arcadeDrive(-Math.abs(yAxis), 0, true);
 		}
 		else {
-			differentialDrive.arcadeDrive(yAxis, xAxis, true);
+			differentialDrive.arcadeDrive(yAxis * -1, xAxis, true);
 		}
 	}
 	
