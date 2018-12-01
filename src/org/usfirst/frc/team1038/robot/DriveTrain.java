@@ -18,9 +18,10 @@ public class DriveTrain extends Subsystem {
 	//private static final int TIMEOUT_MS = 50;
 	//private double distPerPulse;
 	private final static int LEFT_DRIVE_PORT = 0;
-	private final static int RIGHT_DRIVE_PORT = 1;
+	private final static int RIGHT_DRIVE_PORT = 3;
 	private static Spark leftDrive = new Spark(LEFT_DRIVE_PORT);
 	private static Spark rightDrive = new Spark(RIGHT_DRIVE_PORT);
+	private static Spark rightDrive2 = new Spark(4);
 //	private SpeedControllerGroup leftDrive = new SpeedControllerGroup(leftDrive1, leftDrive2);
 //	private SpeedControllerGroup rightDrive = new SpeedControllerGroup(rightDrive1, rightDrive2);
 	private DoubleSolenoid shifter = new DoubleSolenoid(2, 3);
@@ -44,6 +45,7 @@ public class DriveTrain extends Subsystem {
 		//leftDrive1.setInverted(true);
 		//rightDrive1.setInverted(true);
 		//distPerPulse = Encoder1038.findDistancePerPulse(ENCODER_COUNTS_PER_REV, WHEEL_DIAMETER);
+		rightDrive2.setInverted(true);
 		differentialDrive = new DifferentialDrive(leftDrive, rightDrive);
 	}
 	
@@ -140,10 +142,13 @@ public class DriveTrain extends Subsystem {
 	 * @param inputR Right stick input (range -1 to 1)
 	 */
 	public void tankDrive(double inputL, double inputR) {
-		if (PTOisEngaged)
+		if (PTOisEngaged) {
 			differentialDrive.tankDrive(-Math.abs(inputL), -Math.abs(inputL), true);
-		else
-			differentialDrive.tankDrive(inputL, inputR, true);
+		}
+		else {
+			differentialDrive.tankDrive(inputL, inputL, true); //second is inputR
+			rightDrive2.set(inputL); //inputR
+		}
 	}
 	
 	/**

@@ -28,7 +28,8 @@ public class Robot extends IterativeRobot {
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	private Scheduler schedule = Scheduler.getInstance();
 	CommandGroup autonCode;
-	
+	DriveTrain robotDrive = DriveTrain.getInstance();
+	Joystick1038 mainController = new Joystick1038(0);
 	
 	//Compressor
 	Compressor c = new Compressor(0);
@@ -76,6 +77,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		robotDrive.tankDrive(mainController.getLeftJoystickVertical(), mainController.getRightJoystickVertical());
 	}
 
 	/**
