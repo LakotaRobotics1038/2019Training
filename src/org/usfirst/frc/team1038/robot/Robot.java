@@ -7,12 +7,11 @@
 
 package org.usfirst.frc.team1038.robot;
 
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,13 +25,8 @@ public class Robot extends IterativeRobot {
 	private static final String kCustomAuto = "My Auto";
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
-	private Scheduler schedule = Scheduler.getInstance();
-	CommandGroup autonCode;
+	Spark exampleSpark = new Spark(0);
 	
-	
-	//Compressor
-	Compressor c = new Compressor(0);
-
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -42,8 +36,7 @@ public class Robot extends IterativeRobot {
 		m_chooser.addDefault("Default Auto", kDefaultAuto);
 		m_chooser.addObject("My Auto", kCustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
-		
-		c.setClosedLoopControl(true);
+		Joystick leftJoystick = new Joystick(0);
 	}
 
 	/**
@@ -59,8 +52,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autonCode.addSequential(new DriveStraight(2));
-		schedule.add(autonCode);
+		m_autoSelected = m_chooser.getSelected();
+		// autoSelected = SmartDashboard.getString("Auto Selector",
+		// defaultAuto);
+		System.out.println("Auto selected: " + m_autoSelected);
 	}
 
 	/**
@@ -68,7 +63,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		schedule.run();
+		 exampleSpark.set(0.2);
+		
 	}
 
 	/**
@@ -76,6 +72,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		double value;
+		value = leftJoystick.getRawAxis(1);
+		
+		boolean buttonValue;
+		buttonValue = leftJoystick.getRawButton
+		
+		
+		
+		
 	}
 
 	/**
