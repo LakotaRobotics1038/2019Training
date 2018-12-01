@@ -33,18 +33,25 @@ public class Robot extends IterativeRobot {
 	RobotEncoder secondEncoder = RobotEncoder.getFirstInstance();
 	RobotSparkMotor firstMotor = RobotSparkMotor.getInstance();
 	RobotSparkMotor secondMotor = RobotSparkMotor.getFirstInstance();
+	RobotSparkMotor thirdMotor = RobotSparkMotor.getSecondInstance();
 	JoystickCourtney firstJoystick = new JoystickCourtney(0);
 	Compressor airCompressor = new Compressor(0);
 	Scheduler schedule = Scheduler.getInstance();
 	
 	public void robotInit() {
 		airCompressor.setClosedLoopControl(true);
-		schedule.add(new RobotDriveStraight(2));
+	}
+	
+	public void teleopInit() {
+		schedule = null;
+		
 	}
 	
 	public void teleopPeriodic() {
 		firstMotor.set(firstJoystick.getLeftJoystickVertical() * .5);
-		secondMotor.set(firstJoystick.getRightJoystickVertical() * .5);
+		secondMotor.set(firstJoystick.getLeftJoystickVertical() * .5);
+		thirdMotor.set(firstJoystick.getRightJoystickVertical() * .5);
+		System.out.println(firstJoystick.getLeftJoystickVertical() * .5);
 		System.out.println(firstEncoder.getCount() + " , " + secondEncoder.getCount());
 		if(firstJoystick.getXButton()) {
 			(RobotPneumatics.getFirstInstance()).highGear();
@@ -58,6 +65,10 @@ public class Robot extends IterativeRobot {
 		if(firstJoystick.getBButton()) {
 			(RobotPneumatics.getInstance()).PTOOff();
 		}
+	}
+	
+	public void autonomousInit() {
+		schedule.add(new RobotDriveStraight(2));
 	}
 	
 	public void autonomousPeriodic() {

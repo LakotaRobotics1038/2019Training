@@ -10,6 +10,7 @@ public class RobotDriveTrain extends Subsystem {
 	RobotEncoder secondEncoder = RobotEncoder.getFirstInstance();
 	RobotSparkMotor firstMotor = RobotSparkMotor.getInstance();
 	RobotSparkMotor secondMotor = RobotSparkMotor.getFirstInstance();
+	//RobotSparkMotor thirdMotor = RobotSparkMotor.getSecondInstance();
 	private boolean isHighGear = false;
 	private boolean isPTO = false;
 	RobotPneumatics shifter = RobotPneumatics.getFirstInstance();
@@ -73,6 +74,7 @@ public class RobotDriveTrain extends Subsystem {
 		}
 		else {
 			differentialDrive.tankDrive(leftJoystickValue, rightJoystickValue, true);
+			//thirdMotor.set(rightJoystickValue);
 		}
 	}
 	
@@ -81,7 +83,7 @@ public class RobotDriveTrain extends Subsystem {
 			differentialDrive.arcadeDrive(-Math.abs(yAxis), 0, true);
 		}
 		else {
-			differentialDrive.arcadeDrive(yAxis * -1, xAxis, true);
+			differentialDrive.arcadeDrive(yAxis, xAxis, true);
 		}
 	}
 	
