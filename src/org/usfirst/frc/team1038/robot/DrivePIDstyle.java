@@ -21,10 +21,10 @@ public class DrivePIDstyle extends PIDCommand {
 		super(dP,dI,dD);
 		
 		
-		setSetpoint(target); // guys GUYS please  PLEASE  don't call your argument "setpoint" if your function name is "setSetpoint"
+		setSetpoint(target); //   don't call your argument "setpoint" if your function name is "setSetpoint"
 		drivePID.setAbsoluteTolerance(TOLERANCE);
 		drivePID.setOutputRange(-.75, .75); //if you stress the motor too much it quits the job
-		drivePID.setContinuous(false); // what does this do
+		drivePID.setContinuous(false); // ???
 		
 		jeb      =j;
 		eman     =e;
@@ -35,7 +35,6 @@ public class DrivePIDstyle extends PIDCommand {
 	
 	@Override // does this ting
 	public void initialize () {
-		eman.reset(); //gang
 		System.out.println("initialize() e xecuted");
 		
 	}
@@ -43,8 +42,9 @@ public class DrivePIDstyle extends PIDCommand {
 	public void execute ()  {
 		System.out.println("execute() executed");
 		drivePID.enable();
+		System.out.println("drivePID.enable()d");
 		usePIDOutput(drivePID.get());
-		
+		System.out.println("drivePID.get()ted");
 	}
 	@Override
 	protected double returnPIDInput() {
@@ -59,7 +59,7 @@ public class DrivePIDstyle extends PIDCommand {
 
 	@Override
 	protected boolean isFinished() {
-		return drivePID.onTarget(); // stolen from drive straight command dot jave
+		return drivePID.onTarget(); // stolen from drive straight command. java
 	}
 	
 	

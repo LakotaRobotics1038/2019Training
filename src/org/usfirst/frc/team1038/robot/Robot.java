@@ -67,7 +67,7 @@ public class Robot extends IterativeRobot {
 	
 	private DigitalInput finger;
 	
-	private Servo servo; //out of bad names
+	private Servo servo;
 	
 	private Relay relay;
 	
@@ -87,7 +87,7 @@ public class Robot extends IterativeRobot {
 		m_chooser.addObject("My Auto", kCustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
 		spaRK = new Spark(0);
-		spark2 = new Spark(1); // make this into an array or something lol
+		spark2 = new Spark(1); // make this into an array or something 
 		sticc = new Joystick(0);
 		encodeman = new Encoder(2,3);
 		encodeman.reset();
@@ -101,7 +101,7 @@ public class Robot extends IterativeRobot {
 		}
 		finger = new DigitalInput(8); // IO PORT 9, not PWM 9
 		servo = new Servo(9); // PWM PORT 9, not IO 9
-		relay = new Relay(0); //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		relay = new Relay(0);
 		comprende.setClosedLoopControl(true);
 		errN = new ArrayList<>(3);
 		errT = new ArrayList<>(3);
@@ -110,6 +110,10 @@ public class Robot extends IterativeRobot {
 
 		
 		currentSolenoid = 1;
+		
+		
+		schedule = Scheduler.getInstance(); // why does it work???
+		schedule.add(new DrivePIDstyle(0, spark2, encodeman));
 		
 
 	}
@@ -135,12 +139,12 @@ public class Robot extends IterativeRobot {
 		System.out.println("Auto selected: " + m_autoSelected);
 		encodeman.reset();
 		
-		
 		group = new CommandGroup();
-		group.addSequential(new DrivePIDstyle(200,spaRK,encodeman));
+		group.addSequential(new DrivePIDstyle(0,spark2,encodeman));
 		System.out.println("group.addSequential() executed");
 		schedule.add(group);
 		System.out.println("schedule.add() executed");
+		
 		
 	}
 	
@@ -206,6 +210,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		
+		/*
 		//System.out.println(finger.get());
 		//if (!sticc.getRawButton(1)) {
 			spaRK.set(sticc.getX()*1);
@@ -291,6 +297,12 @@ public class Robot extends IterativeRobot {
 			try{Thread.sleep((long)delays[i]);}catch(Exception p) {;}
 		}
 		System.exit(9899899889);*/
+        // maybe it's just because auton periodic doesn't work
+		
+		if (schedule != null) {
+			schedule.run();
+			
+		}
 		
 
 	}
