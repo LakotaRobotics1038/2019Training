@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team1038.robot;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -74,6 +75,13 @@ public class Robot extends IterativeRobot {
 	private CommandGroup group;
 	private Scheduler schedule;
 	
+	private String[][] commands;
+	private ArrayList<String[]> recordedInputs;
+	private long startTime;
+	private int playbackIndex;
+	
+	private double prevXStick, prevZStick;
+	
 	
 	
 	public Compressor comprende = new Compressor(0); // compre d is public
@@ -137,14 +145,17 @@ public class Robot extends IterativeRobot {
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
 		System.out.println("Auto selected: " + m_autoSelected);
-		encodeman.reset();
+//		encodeman.reset();
+//		
+//		group = new CommandGroup();
+//		group.addSequential(new DrivePIDstyle(0,spark2,encodeman));
+//		System.out.println("group.addSequential() executed");
+//		schedule.add(group);
+//		System.out.println("schedule.add() executed");
+//		//uncomment this stuff if you want to use PID
 		
-		group = new CommandGroup();
-		group.addSequential(new DrivePIDstyle(0,spark2,encodeman));
-		System.out.println("group.addSequential() executed");
-		schedule.add(group);
-		System.out.println("schedule.add() executed");
-		
+		startTime = System.currentTimeMillis();
+		commands = (String[][])CSV.csv2tab(new File("recording.csv"));
 		
 	}
 	
@@ -160,6 +171,8 @@ public class Robot extends IterativeRobot {
 	
 	public void teleopInit() {
 		encodeman.reset();
+		
+		startTime = System.currentTimeMillis();
 	}
 
 	/**
@@ -167,6 +180,18 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		
+		// Test Recording Things
+		
+		while ((int)(System.currentTimeMillis()-startTime) < Integer.parseInt(commands[playbackIndex][0])) { 
+			playbackIndex++;
+		}
+		sticc.setX(commands[playbackIndex][2]);
+		sticc.setZ(commands[playbackIndex][3]);
+		
+		
+		
+		
 		switch (m_autoSelected) {
 		case kCustomAuto:
 			// Put custom auto code here
@@ -176,7 +201,13 @@ public class Robot extends IterativeRobot {
 			// Put default auto code here
 			break;
 		}
-		System.out.println(encodeman.getDistance());
+		
+		
+		//System.out.println(encodeman.getDistance());
+		
+		
+		
+		
 		/*if (Math.abs(encodeman.get()) < 3000) {
 			spade2.set(-(encodeman.get()+4000)/7005.0);
 			System.out.println((encodeman.get()+100)/405.0);
@@ -198,10 +229,12 @@ public class Robot extends IterativeRobot {
 			//spade2.set(-1*Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())-doDistance)/(doDistance*2)-.5);
 		
 		//if (!group.isRunning())
-		schedule.run();
-		System.out.println("schedule.run() passed");
 		
 		
+//		schedule.run();
+//		System.out.println("schedule.run() passed");
+//		// uncomment some of this (?) if you want to do PID stuff 
+//		
 		
 	}
 
@@ -210,6 +243,38 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		
+		// Recorder, please record my inputs!
+		spaRK.set(sticc.getX()*1);
+		spark2.set(sticc.getZ()*1);
+		
+		String[] curInput = {""+(int)(System.currentTimeMillis()-startTime), ""+0, ""+sticc.getX(), ""+sticc.getZ()};
+		
+		// @l153, l170
+		
+		if (sticc.getX() != prevXStick || sticc.getZ() != prevZStick) {
+			
+			recordedInputs.add(curInput);
+			if (recordedInputs.size() > 1) {
+				int recInpSize = recordedInputs.size();
+				recordedInputs.get(recInpSize-1)[1] = ""+(Integer.parseInt(recordedInputs.get(recInpSize)[0]) - Integer.parseInt(recordedInputs.get(recInpSize-1)[0]));
+			}
+			
+			
+		}
+		
+		CSV.tab2csv((Object[][])recordedInputs.toArray(), new File("recording.csv"));
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		/*
 		//System.out.println(finger.get());
@@ -299,11 +364,11 @@ public class Robot extends IterativeRobot {
 		System.exit(9899899889);*/
         // maybe it's just because auton periodic doesn't work
 		
-		if (schedule != null) {
-			schedule.run();
-			
-		}
-		
+//		if (schedule != null) {
+//			schedule.run();
+//			
+//		}
+//		//uncomment all this if you want to do PID stuff
 
 	}
 	
