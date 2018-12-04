@@ -17,28 +17,28 @@ public class JoystickLandis extends Joystick {
 	private final int leftJC = 11;
 	private final int rightJC = 12;
 	
-	private final int leftJH = 1;
+	private final int leftJH = 0;
 	private final int leftJV = 1;
-	private final int rightJH = 1;
-	private final int rightJV = 1;
+	private final int rightJH = 2;
+	private final int rightJV = 3;
 	
 	public JoystickLandis(int port) {
 		super(port);
 	}
 	
-	public boolean getX() {
+	public boolean getXButton() {
 		return getRawButton(X);
 	}
 	
-	public boolean getA() {
+	public boolean getAButton() {
 		return getRawButton(A);
 	}
 	
-	public boolean getB() {
+	public boolean getBButton() {
 		return getRawButton(B);
 	}
 	
-	public boolean getY() {
+	public boolean getYButton() {
 		return getRawButton(Y);
 	}
 	
@@ -74,19 +74,19 @@ public class JoystickLandis extends Joystick {
 		return getRawButton(rightJC);
 	}
 	
-	public boolean getLeftJV() {
-		return getRawButton(leftJV) * -1;
+	public double getLeftJV() {
+		return getRawAxis(leftJV) * -1;
 	}
 	
-	public boolean getLeftJH() {
-		return getRawButton(leftJH);
+	public double getLeftJH() {
+		return getRawAxis(leftJH);
 	}
 	
-	public boolean getRightJV() {
-		return getRawButton(rightJV) * -1;
+	public double getRightJV() {
+		return getRawAxis(rightJV) * -1;
 	}
 	
-	public boolean getRightJH() {
-		return getRawButton(rightJH);
+	public double getRightJH() {
+		return getRawAxis(rightJH);
 	}
 }
