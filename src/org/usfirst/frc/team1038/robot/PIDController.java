@@ -20,6 +20,9 @@ public class PIDController {
         pGain = p;
         iGain = i;
         dGain = d;
+        System.out.println(pGain);
+        System.out.println(iGain);
+        System.out.println(dGain);
     }
 
     public Double update(long currTime, double currValue) {
