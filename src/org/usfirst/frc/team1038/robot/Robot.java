@@ -7,8 +7,9 @@
 
 package org.usfirst.frc.team1038.robot;
 
-import edu.wpi.first.wpilibj.Compressor;
+//import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -30,9 +31,9 @@ public class Robot extends IterativeRobot {
 	CommandGroup autonCode;
 	DriveTrain robotDrive = DriveTrain.getInstance();
 	Joystick1038 mainController = new Joystick1038(0);
-	
+
 	//Compressor
-	Compressor c = new Compressor(0);
+	//Compressor c = new Compressor(0);
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -44,7 +45,7 @@ public class Robot extends IterativeRobot {
 		m_chooser.addObject("My Auto", kCustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
 		
-		c.setClosedLoopControl(true);
+		//c.setClosedLoopControl(true);
 	}
 
 	/**
@@ -69,7 +70,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		schedule.run();
+		//schedule.run();
+		while(Math.abs(robotDrive.getLeftDriveEncoderDistance()) < 1) {
+			robotDrive.rightDrive2.set(0.3);
+		}
 	}
 
 	/**
@@ -78,6 +82,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		robotDrive.tankDrive(mainController.getLeftJoystickVertical(), mainController.getRightJoystickVertical());
+		System.out.println(robotDrive.getLeftDriveEncoderDistance());
 	}
 
 	/**

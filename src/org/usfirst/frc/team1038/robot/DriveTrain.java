@@ -18,14 +18,14 @@ public class DriveTrain extends Subsystem {
 	//private static final int TIMEOUT_MS = 50;
 	//private double distPerPulse;
 	private final static int LEFT_DRIVE_PORT = 0;
-	private final static int RIGHT_DRIVE_PORT = 3;
+	private final static int RIGHT_DRIVE_PORT = 1;
 	private static Spark leftDrive = new Spark(LEFT_DRIVE_PORT);
 	private static Spark rightDrive = new Spark(RIGHT_DRIVE_PORT);
-	private static Spark rightDrive2 = new Spark(4);
+	public  Spark rightDrive2 = new Spark(2); // 4 for other robot
 //	private SpeedControllerGroup leftDrive = new SpeedControllerGroup(leftDrive1, leftDrive2);
 //	private SpeedControllerGroup rightDrive = new SpeedControllerGroup(rightDrive1, rightDrive2);
-	private DoubleSolenoid shifter = new DoubleSolenoid(2, 3);
-	private DoubleSolenoid PTO = new DoubleSolenoid(5, 4);
+//	private DoubleSolenoid shifter = new DoubleSolenoid(2, 3);
+//	private DoubleSolenoid PTO = new DoubleSolenoid(5, 4);
 	private EncoderSensor leftDriveEncoder = new EncoderSensor(LEFT_ENCODER_CHANNEL_A, LEFT_ENCODER_CHANNEL_B, false, ENCODER_COUNTS_PER_REV, WHEEL_DIAMETER);
 	private EncoderSensor rightDriveEncoder = new EncoderSensor(RIGHT_ENCODER_CHANNEL_A, RIGHT_ENCODER_CHANNEL_B, false, ENCODER_COUNTS_PER_REV, WHEEL_DIAMETER);
 	private boolean isHighGear = false;
@@ -187,56 +187,56 @@ public class DriveTrain extends Subsystem {
 	/**
 	 * Toggle the PTO between on and off
 	 */
-	public void togglePTO() {
-		if(PTOisEngaged) {
-			PTOoff();
-		}else {
-			PTOon();
-		}
-	}
-	
-	/**
-	 * Change PTO to on
-	 */
-	public void PTOon() {
-		PTOisEngaged = true;
-		PTO.set(DoubleSolenoid.Value.kReverse);
-	}
-	
-	/**
-	 * Change PTO to off
-	 */
-	public void PTOoff() {
-		PTOisEngaged = false;
-		PTO.set(DoubleSolenoid.Value.kForward);
-	}
-	
-	/**
-	 * Toggle the Gear between high and low
-	 */
-	public void toggleGear() {
-		if(isHighGear) {
-			lowGear();
-		}else {
-			highGear();
-		}
-	}
-	
-	/**
-	 * Change gear to high
-	 */
-	public void highGear() {
-		isHighGear = true;
-		shifter.set(DoubleSolenoid.Value.kForward);
-	}
-	
-	/**
-	 * Change gear to low
-	 */
-	public void lowGear() {
-		isHighGear = false;
-		shifter.set(DoubleSolenoid.Value.kReverse);
-	}
+//	public void togglePTO() {
+//		if(PTOisEngaged) {
+//			PTOoff();
+//		}else {
+//			PTOon();
+//		}
+//	}
+//	
+//	/**
+//	 * Change PTO to on
+//	 */
+//	public void PTOon() {
+//		PTOisEngaged = true;
+//		PTO.set(DoubleSolenoid.Value.kReverse);
+//	}
+//	
+//	/**
+//	 * Change PTO to off
+//	 */
+//	public void PTOoff() {
+//		PTOisEngaged = false;
+//		PTO.set(DoubleSolenoid.Value.kForward);
+//	}
+//	
+//	/**
+//	 * Toggle the Gear between high and low
+//	 */
+//	public void toggleGear() {
+//		if(isHighGear) {
+//			lowGear();
+//		}else {
+//			highGear();
+//		}
+//	}
+//	
+//	/**
+//	 * Change gear to high
+//	 */
+//	public void highGear() {
+//		isHighGear = true;
+//		shifter.set(DoubleSolenoid.Value.kForward);
+//	}
+//	
+//	/**
+//	 * Change gear to low
+//	 */
+//	public void lowGear() {
+//		isHighGear = false;
+//		shifter.set(DoubleSolenoid.Value.kReverse);
+//	}
 	
 	/**
 	 * Returns if the gear is set to high
