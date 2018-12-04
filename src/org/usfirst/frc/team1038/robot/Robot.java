@@ -7,7 +7,9 @@
 
 package org.usfirst.frc.team1038.robot;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,6 +28,8 @@ public class Robot extends IterativeRobot {
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	Spark exampleSpark = new Spark(0);
+	Joystick leftJoystick = new Joystick(1);
+	EncoderAaronZ encZ = EncoderAaronZ.getInstance();
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -36,7 +40,7 @@ public class Robot extends IterativeRobot {
 		m_chooser.addDefault("Default Auto", kDefaultAuto);
 		m_chooser.addObject("My Auto", kCustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
-		Joystick leftJoystick = new Joystick(0);
+		
 	}
 
 	/**
@@ -63,8 +67,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		 exampleSpark.set(0.2);
-		
+		 
 	}
 
 	/**
@@ -76,10 +79,12 @@ public class Robot extends IterativeRobot {
 		value = leftJoystick.getRawAxis(1);
 		
 		boolean buttonValue;
-		buttonValue = leftJoystick.getRawButton
+		buttonValue = leftJoystick.getRawButton(2);
+		if(value == .5 && buttonValue == true) {
+			exampleSpark.set(.25);
+		}
 		
-		
-		
+		System.out.println(encZ.get());
 		
 	}
 
