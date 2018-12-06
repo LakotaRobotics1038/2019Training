@@ -7,9 +7,11 @@
 
 package org.usfirst.frc.team1038.robot;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -19,7 +21,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler; // end it
@@ -76,9 +77,10 @@ public class Robot extends IterativeRobot {
 	private Scheduler schedule;
 	
 	private String[][] commands;
-	private ArrayList<String[]> recordedInputs;
+	private ArrayList<String[]> recordedInputs = new ArrayList<>();
 	private long startTime;
 	private int playbackIndex;
+	private boolean arrayTouched = false;
 	
 	private double prevXStick, prevZStick;
 	
@@ -155,7 +157,7 @@ public class Robot extends IterativeRobot {
 //		//uncomment this stuff if you want to use PID
 		
 		startTime = System.currentTimeMillis();
-		commands = (String[][])CSV.csv2tab(new File("recording.csv"));
+		commands = (String[][])CSV.csv2tab(new File("~/recording.csv"));
 		
 	}
 	
@@ -186,8 +188,8 @@ public class Robot extends IterativeRobot {
 		while ((int)(System.currentTimeMillis()-startTime) < Integer.parseInt(commands[playbackIndex][0])) { 
 			playbackIndex++;
 		}
-		sticc.setX(commands[playbackIndex][2]);
-		sticc.setZ(commands[playbackIndex][3]);
+		spaRK.set(Double.parseDouble(commands[playbackIndex][2]));
+		spark2.set(Double.parseDouble(commands[playbackIndex][3]));
 		
 		
 		
@@ -248,13 +250,14 @@ public class Robot extends IterativeRobot {
 		spaRK.set(sticc.getX()*1);
 		spark2.set(sticc.getZ()*1);
 		
-		String[] curInput = {""+(int)(System.currentTimeMillis()-startTime), ""+0, ""+sticc.getX(), ""+sticc.getZ()};
+		String[] curInput = {""+(int)(System.currentTimeMillis()-startTime), ""+0, ""+(sticc.getX()), ""+(sticc.getZ())};
 		
 		// @l153, l170
 		
 		if (sticc.getX() != prevXStick || sticc.getZ() != prevZStick) {
 			
 			recordedInputs.add(curInput);
+			arrayTouched = true;
 			if (recordedInputs.size() > 1) {
 				int recInpSize = recordedInputs.size();
 				recordedInputs.get(recInpSize-1)[1] = ""+(Integer.parseInt(recordedInputs.get(recInpSize)[0]) - Integer.parseInt(recordedInputs.get(recInpSize-1)[0]));
@@ -263,7 +266,31 @@ public class Robot extends IterativeRobot {
 			
 		}
 		
-		CSV.tab2csv((Object[][])recordedInputs.toArray(), new File("recording.csv"));
+		
+		try{File hello = new File("/home/admin/hello.txt");
+		hello.createNewFile();
+		FileWriter fRead = new FileWriter(hello);
+		BufferedWriter fReadBuff = new BufferedWriter(fRead);
+		
+		fReadBuff.write("Hello World!");
+		fReadBuff.close();
+		fRead.close();
+		System.out.println("look for the file");
+		}catch (Exception e) {
+			System.out.println(e);
+		}
+		
+		
+		
+		
+		Object[][] recordedInputsToArray = new Object[recordedInputs.size()][];
+		for (int i = 0; i<recordedInputs.size(); i++) {
+			recordedInputsToArray[i] = recordedInputs.get(i);
+		}
+		System.out.println(Arrays.deepToString(recordedInputsToArray));
+		if (!arrayTouched) CSV.tab2csv(recordedInputsToArray, new File("~/recording.csv"));
+		System.out.println("tried t o stored recording csv  ONCE");
+		
 		
 		
 		

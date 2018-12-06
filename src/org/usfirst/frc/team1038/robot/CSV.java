@@ -62,6 +62,10 @@ public class CSV {
 			fWrite.close();
 		} catch (IOException e) {
 			System.out.println("Oops! I couldn't write to the file!");
+			System.out.println(e);
+		} catch (NullPointerException e) {
+			System.out.println(e);
+			System.out.println("end this.");
 		}
 	}
 	
