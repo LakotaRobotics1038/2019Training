@@ -8,6 +8,7 @@
 package org.usfirst.frc.team1038.robot;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -25,7 +26,6 @@ public class Robot extends IterativeRobot {
 	public Spark secondMotor = new Spark(2);
 	public Spark thirdMotor = new Spark(1);
 	public FrankJoystick joystickController = new FrankJoystick(0);
-	public String testRecord = "\"C:\\Users\\FRC1038\\Desktop\\testRecord.txt\"";
 
 	@Override
 	public void robotInit() {
@@ -59,8 +59,14 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		String output = "" + joystickController.getLeftJoystickVertical() + " , " + joystickController.getLeftJoystickHorizontal() + " , " + joystickController.getRightJoystickVertical() + " , " + joystickController.getRightJoystickHorizontal() + " , " + joystickController.getXButton() + " , " + joystickController.getAButton() + " , " + joystickController.getBButton() + " , " + joystickController.getYButton() + " ";
 		BufferedWriter fileWriter;
+		System.out.println("its not gonna print this");
 		try {
-			fileWriter = new BufferedWriter(new FileWriter(testRecord, true));
+			File testFile = new File("new_directory/EDFL.txt");
+			testFile.mkdirs();
+			testFile.createNewFile();
+			//File testFile = new File("/home/lvuser/Output.txt");
+			//testFile.createNewFile();
+			fileWriter = new BufferedWriter(new FileWriter(testFile, true));
 			fileWriter.write(output);
 			fileWriter.close();
 		} catch (IOException e) {
