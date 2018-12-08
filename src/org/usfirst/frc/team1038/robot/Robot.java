@@ -7,15 +7,21 @@
 
 package org.usfirst.frc.team1038.robot;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends IterativeRobot {
 	private static final String kDefaultAuto = "Default";
@@ -46,7 +52,24 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		switch (m_autoSelected) {
 			case kCustomAuto:
-				// Put custom auto code here
+			try {
+				FileReader fileReader = new FileReader("/home/lvuser/Output.txt");
+				BufferedReader bufferedReader = new BufferedReader(fileReader);
+				String fLine = bufferedReader.readLine();
+				while (fLine != null) {
+					ArrayList<String> lineArrLst = new ArrayList<>(Arrays.asList(fLine.split(",")));
+					fLine = bufferedReader.readLine();
+					final int firstMotorSpeed = Integer.parseInt(lineArrLst.get(0));
+					firstMotor.set(firstMotorSpeed);
+				}
+				fileReader.close();
+				bufferedReader.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e2) {
+				System.out.println(e2);
+			}
 				break;
 			case kDefaultAuto:
 			default:
@@ -57,21 +80,39 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		String output = "" + joystickController.getLeftJoystickVertical() + " , " + joystickController.getLeftJoystickHorizontal() + " , " + joystickController.getRightJoystickVertical() + " , " + joystickController.getRightJoystickHorizontal() + " , " + joystickController.getXButton() + " , " + joystickController.getAButton() + " , " + joystickController.getBButton() + " , " + joystickController.getYButton() + " ";
+		File testFile;
+		FileWriter fileWrite = null;
+		BufferedWriter bufferedWrite;
 		BufferedWriter fileWriter;
-		System.out.println("its not gonna print this");
+		//System.out.println("its definitely still gonna print the old one");
 		try {
-			File testFile = new File("new_directory/EDFL.txt");
-			testFile.mkdirs();
-			testFile.createNewFile();
-			//File testFile = new File("/home/lvuser/Output.txt");
-			//testFile.createNewFile();
-			fileWriter = new BufferedWriter(new FileWriter(testFile, true));
-			fileWriter.write(output);
-			fileWriter.close();
+			testFile = new File("/home/lvuser/Output.txt");
+			if(!testFile.exists()) {
+				testFile.createNewFile();
+			}
+			fileWrite = new FileWriter(testFile);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		bufferedWrite = new BufferedWriter(fileWrite);
+		try {
+			for(int i=0; i < 1000; i++) {
+				//String output = "" + joystickController.getLeftJoystickVertical() + " , " + joystickController.getLeftJoystickHorizontal() + " , " + joystickController.getRightJoystickVertical() + " , " + joystickController.getRightJoystickHorizontal() + " , " + joystickController.getXButton() + " , " + joystickController.getAButton() + " , " + joystickController.getBButton() + " , " + joystickController.getYButton() + "\r\n";
+				String output = "" + joystickController.getLeftJoystickVertical() + "";
+				firstMotor.set(joystickController.getLeftJoystickVertical());
+				System.out.println(output);
+				System.out.println(java.time.LocalTime.now());
+				bufferedWrite.write(output);
+				System.out.println(java.time.LocalTime.now()); 
+				Timer.delay(0.01);
+				System.out.println(java.time.LocalTime.now()); 
+				System.out.println(i);
+			}
+			bufferedWrite.flush();
+			bufferedWrite.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 	}
 
