@@ -19,8 +19,12 @@ public class Robot extends IterativeRobot {
 	private static final String kCustomAuto = "My Auto";
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
+	RobotEncoder firstEncoder = RobotEncoder.getInstance();
+	RobotEncoder secondEncoder = RobotEncoder.getFirstInstance();
 	Spark left;
 	Spark right;
+	JoystickLauren firstJoystick = new JoystickLauren (0);
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -37,7 +41,6 @@ public class Robot extends IterativeRobot {
 		right = new Spark(1);
 		
 	}
-	
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
 	 * between different autonomous modes using the dashboard. The sendable
@@ -78,10 +81,14 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		left.set(0.2);
-		right.set(0.2);
+		//left.set(0.2);
+		//right.set(0.2);
+	
+		left.set(firstJoystick.getLeftJoystickVertical() * .2);
+		right.set(firstJoystick.getRightJoystickVertical() * .2);
 	}
 
+	
 	/**
 	 * This function is called periodically during test mode.
 	 */
