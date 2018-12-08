@@ -7,13 +7,17 @@
 
 package org.usfirst.frc.team1038.robot;
 
-//import edu.wpi.first.wpilibj.Compressor;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,10 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends IterativeRobot {
-	private static final String kDefaultAuto = "Default";
-	private static final String kCustomAuto = "My Auto";
-	private String m_autoSelected;
-	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	private Scheduler schedule = Scheduler.getInstance();
 	CommandGroup autonCode;
 	DriveTrain robotDrive = DriveTrain.getInstance();
@@ -41,9 +41,40 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
-		SmartDashboard.putData("Auto choices", m_chooser);
+		new Thread(() -> {
+            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setResolution(640, 480);
+            
+            CvSink cvSink = CameraServer.getInstance().getVideo();
+            CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
+            
+            Mat source = new Mat();
+            Mat output = new Mat();
+            
+            while(!Thread.interrupted()) {
+                cvSink.grabFrame(source);
+                Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+                outputStream.putFrame(output);
+            }
+        }).start();
+		
+//		new Thread(() -> {
+//            UsbCamera camera2 = CameraServer.getInstance().startAutomaticCapture();
+//            camera2.setResolution(640, 480);
+//            
+//            CvSink cvSink2 = CameraServer.getInstance().getVideo();
+//            CvSource outputStream2 = CameraServer.getInstance().putVideo("Blur2", 640, 480);
+//            
+//            Mat source = new Mat();
+//            Mat output = new Mat();
+//            
+//            while(!Thread.interrupted()) {
+//                cvSink2.grabFrame(source);
+//                Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+//                outputStream2.putFrame(output);
+//            }
+//        }).start();
+		//CameraServer.getInstance().startAutomaticCapture();
 		
 		//c.setClosedLoopControl(true);
 	}
