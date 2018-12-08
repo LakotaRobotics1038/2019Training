@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.command.Scheduler;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -29,7 +30,8 @@ RobotEncoder Encoder1;
 RobotEncoder Encoder2;
 //private RobotPneumatics shifter = new RobotPneumatics(2, 3);
 //private RobotPneumatics PTOShifter = new RobotPneumatics(0, 1);
-Compressor airCompressor;
+Compressor airCompressor = new Compressor(0);
+Scheduler schedule = Scheduler.getInstance();
 //Joystick1038 secondJoystick;
 
 
@@ -37,6 +39,7 @@ Compressor airCompressor;
 public void robotInit() {
 	Encoder1 = new RobotEncoder(0 , 1 , 207 , 6);
 	Encoder2 = new RobotEncoder(2 , 3 , 207 , 6);
+	airCompressor.setClosedLoopControl(true);
 
 
 }
@@ -51,6 +54,19 @@ public void teleopPeriodic() {
 //    right.set(0.5);
     System.out.println(firstJoystick.getRawAxis(3));
     System.out.println(-1*firstJoystick.getRawAxis(1));
+    if(((Joystick1038) firstJoystick).getXButton()) {
+		(Pneumatics1038.getFirstInstance()).highGear();
+	}
+	if(((Joystick1038) firstJoystick).getYButton()) {
+		(Pneumatics1038.getFirstInstance()).lowGear();
+	}
+	if(((Joystick1038) firstJoystick).getAButton()) {
+		(Pneumatics1038.getInstance()).PTOOn();
+	}
+	if(((Joystick1038) firstJoystick).getBButton()) {
+		(Pneumatics1038.getInstance()).PTOOff();
+	}
+}
 //        if(firstJoystick.getXButton()) {
 //			shifter.highGear();
 //		}
@@ -62,7 +78,7 @@ public void teleopPeriodic() {
 //    firstJoystick = new Joystick(0);
 
 
-}
+
 
 public void autonomousInit(){
 //	Encoder1.reset();
