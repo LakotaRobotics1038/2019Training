@@ -10,8 +10,11 @@ package org.usfirst.frc.team1038.robot;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -64,7 +67,7 @@ public class Robot extends IterativeRobot {
 	private Encoder encodeman;
 	
 	/*private DoubleSolenoid ligmoid;
-	private DoubleSolenoid ligmoid2;*/
+	private DosubleSolenoid ligmoid2;*/
 	private ArrayList<DoubleSolenoid> ligmoids;
 	
 	private DigitalInput finger;
@@ -81,12 +84,14 @@ public class Robot extends IterativeRobot {
 	private long startTime;
 	private int playbackIndex;
 	private boolean arrayTouched = false;
+	private DateFormat now;
+	private String nowNow;
 	
 	private double prevXStick, prevZStick;
 	
 	
 	
-	public Compressor comprende = new Compressor(0); // compre d is public
+	public Compressor comprende = new Compressor(0); // compre d  publi c
 	/**
 	 * This function is run when the robot is first started up and should be used
 	 * for any initialization code.
@@ -157,7 +162,7 @@ public class Robot extends IterativeRobot {
 //		//uncomment this stuff if you want to use PID
 		
 		startTime = System.currentTimeMillis();
-		commands = (String[][])CSV.csv2tab(new File("~/recording.csv"));
+		commands = (String[][])CSV.csv2tab(new File("/home/lvuser/recording2018-12-10-192044.csv"));
 		
 	}
 	
@@ -175,6 +180,8 @@ public class Robot extends IterativeRobot {
 		encodeman.reset();
 		
 		startTime = System.currentTimeMillis();
+		  now = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+		  nowNow = now.format(new Date());
 	}
 
 	/**
@@ -184,8 +191,12 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		
 		// Test Recording Things
-		
-		while ((int)(System.currentTimeMillis()-startTime) < Integer.parseInt(commands[playbackIndex][0])) { 
+		while (playbackIndex < commands.length-1 && (int)(System.currentTimeMillis()-startTime) > Integer.parseInt(commands[playbackIndex][0]) ) { 
+			
+			System.out.println("playbackIndex: " + playbackIndex);
+			System.out.println(System.currentTimeMillis()-startTime);
+			System.out.println(Integer.parseInt(commands[playbackIndex][0]));
+			System.out.println("");
 			playbackIndex++;
 		}
 		spaRK.set(Double.parseDouble(commands[playbackIndex][2]));
@@ -253,22 +264,23 @@ public class Robot extends IterativeRobot {
 		String[] curInput = {""+(int)(System.currentTimeMillis()-startTime), ""+0, ""+(sticc.getX()), ""+(sticc.getZ())};
 		
 		// @l153, l170
-		
+		arrayTouched = false;
 		if (sticc.getX() != prevXStick || sticc.getZ() != prevZStick) {
 			
 			recordedInputs.add(curInput);
 			arrayTouched = true;
 			if (recordedInputs.size() > 1) {
 				int recInpSize = recordedInputs.size();
-				recordedInputs.get(recInpSize-1)[1] = ""+(Integer.parseInt(recordedInputs.get(recInpSize)[0]) - Integer.parseInt(recordedInputs.get(recInpSize-1)[0]));
+				recordedInputs.get(recInpSize-1)[1] = ""+(Integer.parseInt(recordedInputs.get(recInpSize-1)[0]) - Integer.parseInt(recordedInputs.get(recInpSize-2)[0]));
 			}
 			
 			
 		}
 		
-		
-		try{File hello = new File("/home/admin/hello.txt");
-		hello.createNewFile();
+		/*try{File hello = new File("/home/lvuser/Outputt.txt");
+		if (!hello.exists()) {
+			hello.createNewFile();
+		}
 		FileWriter fRead = new FileWriter(hello);
 		BufferedWriter fReadBuff = new BufferedWriter(fRead);
 		
@@ -278,7 +290,7 @@ public class Robot extends IterativeRobot {
 		System.out.println("look for the file");
 		}catch (Exception e) {
 			System.out.println(e);
-		}
+		}*/
 		
 		
 		
@@ -288,8 +300,11 @@ public class Robot extends IterativeRobot {
 			recordedInputsToArray[i] = recordedInputs.get(i);
 		}
 		System.out.println(Arrays.deepToString(recordedInputsToArray));
-		if (!arrayTouched) CSV.tab2csv(recordedInputsToArray, new File("~/recording.csv"));
-		System.out.println("tried t o stored recording csv  ONCE");
+		
+		File recording = new File("/home/lvuser/recording"+nowNow+".csv");
+		try{recording.createNewFile();}catch(Exception e) {}
+		
+		if (arrayTouched) CSV.tab2csv(recordedInputsToArray, recording);
 		
 		
 		
