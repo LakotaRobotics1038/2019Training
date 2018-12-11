@@ -58,9 +58,12 @@ public class Robot extends IterativeRobot {
 				String fLine = bufferedReader.readLine();
 				while (fLine != null) {
 					ArrayList<String> lineArrLst = new ArrayList<>(Arrays.asList(fLine.split(",")));
-					fLine = bufferedReader.readLine();
 					final int firstMotorSpeed = Integer.parseInt(lineArrLst.get(0));
+					final int secondMotorSpeed = Integer.parseInt(lineArrLst.get(1));
+					System.out.println(firstMotorSpeed + " , " + secondMotorSpeed);
 					firstMotor.set(firstMotorSpeed);
+					secondMotor.set(secondMotorSpeed);
+					fLine = bufferedReader.readLine();
 				}
 				fileReader.close();
 				bufferedReader.close();
@@ -99,8 +102,10 @@ public class Robot extends IterativeRobot {
 		try {
 			for(int i=0; i < 1000; i++) {
 				//String output = "" + joystickController.getLeftJoystickVertical() + " , " + joystickController.getLeftJoystickHorizontal() + " , " + joystickController.getRightJoystickVertical() + " , " + joystickController.getRightJoystickHorizontal() + " , " + joystickController.getXButton() + " , " + joystickController.getAButton() + " , " + joystickController.getBButton() + " , " + joystickController.getYButton() + "\r\n";
-				String output = "" + joystickController.getLeftJoystickVertical() + "";
+				//double joystickValue = joystickController.getLeftJoystickVertical() * .5;
+				String output = "" + joystickController.getLeftJoystickVertical() + "," + joystickController.getRightJoystickVertical() + "\r\n";
 				firstMotor.set(joystickController.getLeftJoystickVertical());
+				secondMotor.set(joystickController.getRightJoystickVertical());
 				System.out.println(output);
 				System.out.println(java.time.LocalTime.now());
 				bufferedWrite.write(output);
