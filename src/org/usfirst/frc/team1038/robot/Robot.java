@@ -27,6 +27,8 @@ public class Robot extends IterativeRobot {
 	Spark firstMotor = new Spark(0);
 	Spark secondMotor = new Spark(1);
 	JoystickLandis firstJoystick = new JoystickLandis(0);
+	RobotEncoder firstEncoder = new RobotEncoder(0, 1, 205, 6);
+	RobotEncoder secondEncoder = new RobotEncoder(2, 3, 205, 6);
 	
 
 	/**
@@ -82,6 +84,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		firstMotor.set(firstJoystick.getLeftJV() * .5);
 		secondMotor.set(firstJoystick.getRightJV() * .5);
+		System.out.println(firstEncoder.getCount() + ", " + secondEncoder.getCount());
 	}
 
 	/**
