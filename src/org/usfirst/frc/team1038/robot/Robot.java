@@ -34,6 +34,7 @@ JoystickAZ LJoystick = new JoystickAZ(1);
 EncoderAZ enc1 = EncoderAZ.getInstance1();
 EncoderAZ enc2 = EncoderAZ.getInstance2();
 Compressor compressor1 = new Compressor(0);
+
 /**
 * This function is run when the robot is first started up and should be
 * used for any initialization code.
@@ -76,11 +77,6 @@ System.out.println("Auto selected: " + m_autoSelected);
 public void autonomousPeriodic() {
 System.out.println(enc1.getCount() + " , " + enc2.getCount());
 System.out.println(enc1.getDistance() + " , " + enc2.getDistance());
-motor1.set(.25);//tested moves kinda fast at.022987 
-motor2.set(.25);//tested, not movement for port 2 and test port one and no movement
-//motor3.set(.25);// by itself it kind of moves but it does MOVE!!!
-//motor4.set(.25);///kinda moved by itself now testing motor 3 and 4 together
-
 }
 
 
@@ -91,8 +87,21 @@ motor2.set(.25);//tested, not movement for port 2 and test port one and no movem
 */
 @Override
 public void teleopPeriodic() {
-motor1.set(LJoystick.getLeftJoystickVertical() * .5);
-motor2.set(LJoystick.getLeftJoystickVertical() * .5);
+	motor1.set(LJoystick.getLeftJoystickVertical() * .5);
+	motor2.set(LJoystick.getLeftJoystickVertical() * .5);
+	if(LJoystick.getXButton()) {
+		(PneumaticsAZ.getInstance1()).highGear();
+	}
+	if(LJoystick.getYButton()) {
+		(PneumaticsAZ.getInstance1()).lowGear();
+	}
+	if(LJoystick.getAButton()) {
+		(PneumaticsAZ.getInstance2()).PTOOn();
+	}
+	if(LJoystick.getBButton()) {
+		(PneumaticsAZ.getInstance2()).PTOOff();
+	}
+	
 }
 
 
