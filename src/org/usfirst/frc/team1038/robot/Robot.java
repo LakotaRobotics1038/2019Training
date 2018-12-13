@@ -28,10 +28,10 @@ public class Robot extends IterativeRobot {
 	private static final String kCustomAuto = "My Auto";
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
-	public Spark firstMotor = new Spark(0);
-	public Spark secondMotor = new Spark(2);
-	public Spark thirdMotor = new Spark(1);
+	public Spark firstMotor = FrankMotor.getInstance();
+	public Spark secondMotor = FrankMotor.getFirstInstance();
 	public FrankJoystick joystickController = new FrankJoystick(0);
+	FrankDriveTrain driveTrain = FrankDriveTrain.getInstance();
 
 	@Override
 	public void robotInit() {
@@ -52,31 +52,90 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		switch (m_autoSelected) {
 			case kCustomAuto:
-			try {
+			/*try {
 				FileReader fileReader = new FileReader("/home/lvuser/Output.txt");
+				System.out.println("made a new file reader yay!");
 				BufferedReader bufferedReader = new BufferedReader(fileReader);
+				System.out.println("made a new buffered reader yay!");
 				String fLine = bufferedReader.readLine();
+				System.out.println("read a line, go me!");
 				while (fLine != null) {
 					ArrayList<String> lineArrLst = new ArrayList<>(Arrays.asList(fLine.split(",")));
+					System.out.println("made an array yay!");
 					final int firstMotorSpeed = Integer.parseInt(lineArrLst.get(0));
 					final int secondMotorSpeed = Integer.parseInt(lineArrLst.get(1));
 					System.out.println(firstMotorSpeed + " , " + secondMotorSpeed);
 					firstMotor.set(firstMotorSpeed);
 					secondMotor.set(secondMotorSpeed);
+					final boolean xButton = Boolean.parseBoolean(lineArrLst.get(2));
+					if(xButton) {
+						driveTrain.lowGear();
+					}
+					final boolean aButton = Boolean.parseBoolean(lineArrLst.get(3));
 					fLine = bufferedReader.readLine();
+					System.out.println("hopefully read the next line, yay?");
 				}
 				fileReader.close();
 				bufferedReader.close();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
+				System.out.println("probably just cry");
 				e.printStackTrace();
 			} catch (IOException e2) {
 				System.out.println(e2);
-			}
+			}*/
 				break;
 			case kDefaultAuto:
+				try {
+					FileReader fileReader = new FileReader("/home/lvuser/Output.txt");
+					System.out.println("made a new file reader yay!");
+					BufferedReader bufferedReader = new BufferedReader(fileReader);
+					System.out.println("made a new buffered reader yay!");
+					String fLine = bufferedReader.readLine();
+					System.out.println("read a line, go me!");
+					System.out.println(java.time.LocalTime.now());
+					while (fLine != null) {
+						ArrayList<String> lineArrLst = new ArrayList<>(Arrays.asList(fLine.split(",")));
+						System.out.println("made an array yay!");
+						final double firstMotorSpeed = Double.parseDouble(lineArrLst.get(0));
+						final double secondMotorSpeed = Double.parseDouble(lineArrLst.get(1));
+						System.out.println(firstMotorSpeed + " , " + secondMotorSpeed);
+						firstMotor.set(firstMotorSpeed);
+						secondMotor.set(secondMotorSpeed);
+						final boolean xButton = Boolean.parseBoolean(lineArrLst.get(2));
+						if(xButton) {
+							driveTrain.lowGear();
+						}
+						final boolean aButton = Boolean.parseBoolean(lineArrLst.get(3));
+						if(aButton) {
+							driveTrain.PTOOn();
+						}
+						final boolean bButton = Boolean.parseBoolean(lineArrLst.get(4));
+						if(bButton) {
+							driveTrain.PTOOff();
+						}
+						final boolean yButton = Boolean.parseBoolean(lineArrLst.get(5));
+						if(yButton) {
+							driveTrain.highGear();
+						}
+						fLine = bufferedReader.readLine();
+						System.out.println("hopefully read the next line, yay?");
+						Timer.delay(0.01);
+					}
+					System.out.println(java.time.LocalTime.now());
+					fileReader.close();
+					bufferedReader.close();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					System.out.println("probably just cry");
+					e.printStackTrace();
+				} catch (IOException e2) {
+					System.out.println(e2);
+				}
+				break;
 			default:
 				// Put default auto code here
+				System.out.println("definitely just cry");
 				break;
 		}
 	}
@@ -100,10 +159,10 @@ public class Robot extends IterativeRobot {
 		}
 		bufferedWrite = new BufferedWriter(fileWrite);
 		try {
-			for(int i=0; i < 1000; i++) {
-				//String output = "" + joystickController.getLeftJoystickVertical() + " , " + joystickController.getLeftJoystickHorizontal() + " , " + joystickController.getRightJoystickVertical() + " , " + joystickController.getRightJoystickHorizontal() + " , " + joystickController.getXButton() + " , " + joystickController.getAButton() + " , " + joystickController.getBButton() + " , " + joystickController.getYButton() + "\r\n";
+			for(int i=0; i < 1500; i++) {
+				String output = "" + joystickController.getLeftJoystickVertical() + " , " + joystickController.getRightJoystickVertical() + " , " + joystickController.getXButton() + " , " + joystickController.getAButton() + " , " + joystickController.getBButton() + " , " + joystickController.getYButton() + "\r\n";
 				//double joystickValue = joystickController.getLeftJoystickVertical() * .5;
-				String output = "" + joystickController.getLeftJoystickVertical() + "," + joystickController.getRightJoystickVertical() + "\r\n";
+				//String output = "" + joystickController.getLeftJoystickVertical() + "," + joystickController.getRightJoystickVertical() + "\r\n";
 				firstMotor.set(joystickController.getLeftJoystickVertical());
 				secondMotor.set(joystickController.getRightJoystickVertical());
 				System.out.println(output);
