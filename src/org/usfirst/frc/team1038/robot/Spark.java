@@ -20,5 +20,6 @@ import edu.wpi.first.wpilibj.PWMSpeedController;
 	    public void stop() {
 	    	this.set(0);
 	    }
+			
+		}
 		
-	}

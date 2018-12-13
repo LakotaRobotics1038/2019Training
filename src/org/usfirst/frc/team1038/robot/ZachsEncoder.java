@@ -1,8 +1,6 @@
 package org.usfirst.frc.team1038.robot;
-import edu.wpi.first.wpilibj.CounterBase;
-import edu.wpi.first.wpilibj.DigitalSource;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.hal.EncoderJNI;
+
 
 
 public class ZachsEncoder extends Encoder {
