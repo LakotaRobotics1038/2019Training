@@ -135,7 +135,7 @@ public class Robot extends IterativeRobot {
 		
 		
 		schedule = Scheduler.getInstance(); // why does it work???
-		schedule.add(new DrivePIDstyle(0, spark2, encodeman));
+		
 		
 		
 		
@@ -179,12 +179,12 @@ public class Robot extends IterativeRobot {
 		System.out.println("Auto selected: " + m_autoSelected);
 //		encodeman.reset();
 //		
-//		group = new CommandGroup();
-//		group.addSequential(new DrivePIDstyle(0,spark2,encodeman));
-//		System.out.println("group.addSequential() executed");
-//		schedule.add(group);
-//		System.out.println("schedule.add() executed");
-//		//uncomment this stuff if you want to use PID
+		group = new CommandGroup();
+		group.addSequential(new DrivePIDstyle(100,spark2,encodeman));
+		System.out.println("group.addSequential() executed");
+		schedule.add(group);
+		System.out.println("schedule.add() executed");
+		//uncomment this stuff if you want to use PID
 		
 		startTime = System.currentTimeMillis();
 		commands = (String[][])CSV.csv2tab(new File("/home/lvuser/recording"+nowNow+".csv"));
@@ -246,7 +246,8 @@ public class Robot extends IterativeRobot {
 			
 			schedule.run();
 			System.out.println("schedule.run() passed");
-			// uncomment some of this (?) if you want to do PID stuff 
+			// uncomment some of this (?) if you want to do PID stuff
+			System.out.println(encodeman.getDistance());
 		default:
 			// Put default auto code here
 			break;
@@ -254,7 +255,7 @@ public class Robot extends IterativeRobot {
 		}
 		
 		
-		//System.out.println(encodeman.getDistance());
+		
 		
 		
 		
@@ -353,7 +354,8 @@ public class Robot extends IterativeRobot {
 		case compressor:
 		////// VVVVVVVVVVVVV COMPRESSOR STUFF (testPeriodic DOES NOT WORK)
 			
-			
+			spaRK.set(sticc.getX()*1);
+			spark2.set(sticc.getZ()*1);
 			
 			System.out.println("Current Solenoid: " + (int)(currentSolenoid+.5f) + " -- Press X to change");
 			System.out.print("                                                      Solenoid States:  ");

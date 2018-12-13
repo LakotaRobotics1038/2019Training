@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj.command.PIDCommand;
 public class DrivePIDstyle extends PIDCommand {
 
 	
-	private final static double dP = 0.150; //.04 limo
-	private final static double dI = 0.000;
-	private final static double dD = 0.002;
+	private final static double dP = 0.13000; //.04 limo
+	private final static double dI = 0;
+	private final static double dD = 0.03;
 	private PIDController drivePID = getPIDController();
-	public static final double TOLERANCE = 20;
+	public static final double TOLERANCE = 0.25;
 	
 	private Spark jeb;
 	private Encoder eman;
@@ -28,7 +28,7 @@ public class DrivePIDstyle extends PIDCommand {
 		
 		jeb      =j;
 		eman     =e;
-		System.out.println("Dri]vePIDstyle constructor executed");
+		System.out.println(" Dri]vePIDstyle constructor executed");
 		requires(Robot.robotDrive); // what
 		
 	}
@@ -53,7 +53,7 @@ public class DrivePIDstyle extends PIDCommand {
 
 	@Override
 	protected void usePIDOutput(double output) {
-		jeb.setSpeed(output);
+		jeb.setSpeed(-output);
 		
 	}
 
