@@ -8,17 +8,23 @@ import edu.wpi.first.wpilibj.command.PIDCommand;
 public class DrivePIDstyle extends PIDCommand {
 
 	
-	private final static double dP = 0.13000; //.04 limo
-	private final static double dI = 0;
-	private final static double dD = 0.03;
+	private final static double dPs1 = 0.13000; //.04 limo
+	private final static double dIs1 = 0;
+	private final static double dDs1 = 0.03;
+	private final static double dPt = 0.13000; //.04 limo
+	private final static double dIt= 0;
+	private final static double dDt = 0.03;
+	
 	private PIDController drivePID = getPIDController();
+	private I2CGyro gyroSensor = I2CGyro.getInstance();
+	
 	public static final double TOLERANCE = 0.25;
 	
 	private Spark jeb;
 	private Encoder eman;
 	
 	public DrivePIDstyle(double target, Spark j, Encoder e) {
-		super(dP,dI,dD);
+		super(dPs1,dIs1,dDs1);
 		
 		
 		
@@ -54,7 +60,9 @@ public class DrivePIDstyle extends PIDCommand {
 
 	@Override
 	protected void usePIDOutput(double output) {
+		
 		jeb.setSpeed(-output);
+		
 		
 	}
 

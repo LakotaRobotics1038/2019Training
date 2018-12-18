@@ -53,6 +53,10 @@ public class Robot extends IterativeRobot {
 	private static final String doesThisTing = "pba";
 	private static final String gears = "MOVING THE GEARS!!!! MOVING THE GEARS!!!!!";
 	private static final String compressor = "compressor things";
+	private static final String nothing = "notting";
+	private static final String testDrive = "just moving the wheels";
+	private static final String gyro = "gg";
+	
 		
 	
 	public static final double WHEEL_DIAM = 6;
@@ -72,6 +76,8 @@ public class Robot extends IterativeRobot {
 	private Joystick sticc;
 	
 	private Encoder encodeman;
+	private Encoder encodeman2;
+	
 	
 	/*private DoubleSolenoid ligmoid;
 	private DosubleSolenoid ligmoid2;*/
@@ -82,6 +88,8 @@ public class Robot extends IterativeRobot {
 	private Servo servo;
 	
 	private Relay relay;
+	
+	private I2CGyro gyrate;
 	
 	private CommandGroup group;
 	private Scheduler schedule;
@@ -95,6 +103,7 @@ public class Robot extends IterativeRobot {
 	private String nowNow;
 	
 	private double prevXStick, prevZStick;
+	
 	
 	
 	
@@ -113,6 +122,10 @@ public class Robot extends IterativeRobot {
 		sticc = new Joystick(0);
 		encodeman = new Encoder(2,3);
 		encodeman.reset();
+		encodeman2 = new Encoder(0,1);
+		encodeman2.reset();
+		
+		
 		/*ligmoid2 = new DoubleSolenoid(2,3);
 		ligmoid = new DoubleSolenoid(4,5); // I don't know what port solenoid engages the wheel gear
 		ligmoid3 = new DoubleSolenoid(6,7); // I don't know what port solenoid engages the wheel gear
@@ -135,6 +148,7 @@ public class Robot extends IterativeRobot {
 		
 		
 		schedule = Scheduler.getInstance(); // why does it work???
+		gyrate = I2CGyro.getInstance();
 		
 		
 		
@@ -146,7 +160,7 @@ public class Robot extends IterativeRobot {
 		
 		
 		
-		m_autoSelected = pid; // m_autoSelected
+		m_autoSelected = gyro; // m_autoSelected
 		
 		
 		
@@ -239,7 +253,7 @@ public class Robot extends IterativeRobot {
 			}
 			spaRK.set(Double.parseDouble(commands[playbackIndex][2]));
 			spark2.set(Double.parseDouble(commands[playbackIndex][3]));
-			
+			break;
 		case pid:
 			//if (!group.isRunning())
 			
@@ -248,12 +262,15 @@ public class Robot extends IterativeRobot {
 			System.out.println("schedule.run() passed");
 			// uncomment some of this (?) if you want to do PID stuff
 			System.out.println(encodeman.getDistance());
+			break;
+		case nothing:
+			;;;;;;;;;
+			break;
 		default:
 			// Put default auto code here
 			break;
 			
 		}
-		
 		
 		
 		
@@ -291,7 +308,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		
-		
+
+		System.out.println(m_autoSelected);
 		
 		switch (m_autoSelected) {
 		case record:
@@ -330,7 +348,7 @@ public class Robot extends IterativeRobot {
 			if (arrayTouched) CSV.tab2csv(recordedInputsToArray, recording);
 			
 			
-			
+			break;
 		case pid:
 			if (schedule != null) {
 				schedule.run();
@@ -338,7 +356,7 @@ public class Robot extends IterativeRobot {
 			}
 			
 			
-			
+			break;
 		case gears:
 			System.out.println(finger.get());
 			if (!sticc.getRawButton(1)) {
@@ -350,10 +368,9 @@ public class Robot extends IterativeRobot {
 			}
 			System.out.println(encodeman.get());     // MOVING THE GEARS!!!! MOVING THE GEARS!!!!!
 			
-			
+			break;
 		case compressor:
 		////// VVVVVVVVVVVVV COMPRESSOR STUFF (testPeriodic DOES NOT WORK)
-			
 			spaRK.set(sticc.getX()*1);
 			spark2.set(sticc.getZ()*1);
 			
@@ -390,6 +407,32 @@ public class Robot extends IterativeRobot {
 			} catch (Exception minecraft) {
 				throw minecraft;
 			}
+			break;
+		case testDrive:
+			spaRK.set(sticc.getX()*1);
+			spark2.set(sticc.getZ()*1);
+			break;
+		case nothing:
+			;;;;;; //bbbzzz
+			break;
+		case gyro:
+			System.out.println(gyrate.getAngle());
+			break;
+		case gyro+gears:
+			System.out.println(finger.get());
+		if (!sticc.getRawButton(1)) {
+			spaRK.set(sticc.getX()*1);
+			spark2.set(sticc.getZ()*1);
+		} else {
+			spaRK.set(Math.sin(System.currentTimeMillis()*0.01)*0.5);
+			spark2.set(Math.cos(System.currentTimeMillis()*0.01)*0.5);
+		}
+		System.out.println(encodeman.get());     // MOVING THE GEARS!!!! MOVING THE GEARS!!!!!
+			gyrate.getAngle();
+			break;
+			
+			
+			
 			
 			/*relay.set(Relay.Value.kOn);
 			try{Thread.sleep(3);}catch(Exception p) {;}
@@ -430,6 +473,11 @@ public class Robot extends IterativeRobot {
 	        // maybe it's just because auton periodic doesn't work
 		} // ---------END Switch Case----------------
 			
+		
+		
+		
+
+		System.out.println("" + encodeman.get()+ "     " + encodeman2.get());
 		
 		
 		/*try{File hello = new File("/home/lvuser/Outputt.txt");
