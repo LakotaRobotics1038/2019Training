@@ -85,6 +85,15 @@ public class Robot extends IterativeRobot {
 		firstMotor.set(firstJoystick.getLeftJV() * .5);
 		secondMotor.set(firstJoystick.getRightJV() * .5);
 		System.out.println(firstEncoder.getCount() + ", " + secondEncoder.getCount());
+		if(firstEncoder.getCount() == 100)
+		{
+			firstMotor.set(0);
+			
+		}
+		if(secondEncoder.getCount() == 100)
+		{
+			secondMotor.set(0);
+		}
 	}
 
 	/**
