@@ -10,8 +10,8 @@ public class DriveTrain extends Subsystem {
 	public driveModes currentDriveMode = driveModes.dualArcadeDrive;
 	private driveModes prevDriveMode = currentDriveMode;
 	private final int LEFT_ENCODER_CHANNEL_A = 0;
-	private final int RIGHT_ENCODER_CHANNEL_A = 2;
 	private final int LEFT_ENCODER_CHANNEL_B = 1;
+	private final int RIGHT_ENCODER_CHANNEL_A = 2;
 	private final int RIGHT_ENCODER_CHANNEL_B = 3;
 	public final int ENCODER_COUNTS_PER_REV = 205; //910 Talon 220 proto bot
 	public final double WHEEL_DIAMETER = 6;
