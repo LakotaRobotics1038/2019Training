@@ -15,7 +15,7 @@ public class FrankMotor extends Spark {
 	
 	public static FrankMotor getFirstInstance() {
 		if (secondMotor == null) {
-			secondMotor = new FrankMotor(3);
+			secondMotor = new FrankMotor(1);
 			secondMotor.setInverted(true);
 		}
 		return secondMotor;
