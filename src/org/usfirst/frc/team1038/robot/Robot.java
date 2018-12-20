@@ -31,9 +31,15 @@ public class Robot extends IterativeRobot {
 	public Spark firstMotor = FrankMotor.getInstance();
 	public Spark secondMotor = FrankMotor.getFirstInstance();
 	public FrankJoystick joystickController = new FrankJoystick(0);
-	FrankDriveTrain driveTrain = FrankDriveTrain.getInstance();
+	//FrankDriveTrain driveTrain = FrankDriveTrain.getInstance();
 	final double cry = 0.05;
 	final double crying = -0.05;
+	public boolean setToZero2 = true;
+	public boolean setToZero1 = true;
+	File testFile;
+	FileWriter fileWrite = null;
+	BufferedWriter bufferedWrite;
+	BufferedWriter fileWriter;
 
 	@Override
 	public void robotInit() {
@@ -88,7 +94,7 @@ public class Robot extends IterativeRobot {
 			}*/
 				break;
 			case kDefaultAuto:
-				/*try {
+				try {
 					FileReader fileReader = new FileReader("/home/lvuser/Output.txt");
 					System.out.println("made a new file reader yay!");
 					BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -104,7 +110,7 @@ public class Robot extends IterativeRobot {
 						System.out.println(firstMotorSpeed + " , " + secondMotorSpeed);
 						firstMotor.set(firstMotorSpeed);
 						secondMotor.set(secondMotorSpeed);
-						final boolean xButton = Boolean.parseBoolean(lineArrLst.get(2));
+						/*final boolean xButton = Boolean.parseBoolean(lineArrLst.get(2));
 						if(xButton) {
 							driveTrain.lowGear();
 						}
@@ -119,10 +125,9 @@ public class Robot extends IterativeRobot {
 						final boolean yButton = Boolean.parseBoolean(lineArrLst.get(5));
 						if(yButton) {
 							driveTrain.highGear();
-						}
+						}*/
 						fLine = bufferedReader.readLine();
 						System.out.println("hopefully read the next line, yay?");
-						Timer.delay(0.01);
 					}
 					System.out.println(java.time.LocalTime.now());
 					fileReader.close();
@@ -133,7 +138,7 @@ public class Robot extends IterativeRobot {
 					e.printStackTrace();
 				} catch (IOException e2) {
 					System.out.println(e2);
-				}*/
+				}
 				break;
 			default:
 				// Put default auto code here
@@ -141,14 +146,8 @@ public class Robot extends IterativeRobot {
 				break;
 		}
 	}
-
-	@Override
-	public void teleopPeriodic() {
-		System.out.println("hopefully this prints");
-		File testFile;
-		FileWriter fileWrite = null;
-		BufferedWriter bufferedWrite;
-		BufferedWriter fileWriter;
+	
+	public void teleopInit() {
 		//System.out.println("its definitely still gonna print the old one");
 		try {
 			testFile = new File("/home/lvuser/Output.txt");
@@ -161,8 +160,11 @@ public class Robot extends IterativeRobot {
 			e.printStackTrace();
 		}
 		bufferedWrite = new BufferedWriter(fileWrite);
+	}
+
+	@Override
+	public void teleopPeriodic() {
 		try {
-			for(int i=0; i < 1500; i++) {
 				String output = "" + joystickController.getLeftJoystickVertical() + " , " + joystickController.getRightJoystickVertical() + " , " + joystickController.getXButton() + " , " + joystickController.getAButton() + " , " + joystickController.getBButton() + " , " + joystickController.getYButton() + "\r\n";
 				//double joystickValue = joystickController.getLeftJoystickVertical() * .5;
 				//String output = "" + joystickController.getLeftJoystickVertical() + "," + joystickController.getRightJoystickVertical() + "\r\n";
@@ -170,37 +172,48 @@ public class Robot extends IterativeRobot {
 				//secondMotor.set(joystickController.getLeftJoystickVertical());
 				if(joystickController.getLeftJoystickVertical()>cry) {
 					secondMotor.set(joystickController.getLeftJoystickVertical());
+					setToZero2 = false;
 					System.out.println("it was positive");
 				}
 				else if(joystickController.getLeftJoystickVertical()<crying) {
 					secondMotor.set(joystickController.getLeftJoystickVertical());
+					setToZero2 = false;
 					System.out.println("it was negative");
 				}
 				else {
-					//secondMotor.set(0);
+					if(setToZero2) {
+						secondMotor.set(0);
+					}
+					else {
+						secondMotor.set(0);
+						setToZero2 = true;
+					}
 					System.out.println("You inputed a really small number");
 				}
 				if(joystickController.getRightJoystickVertical()>cry) {
 					firstMotor.set(joystickController.getRightJoystickVertical());
+					setToZero1 = false;
 					System.out.println("it was positive");
 				}
 				else if(joystickController.getRightJoystickVertical()<crying) {
 					firstMotor.set(joystickController.getRightJoystickVertical());
+					setToZero1 = false;
 					System.out.println("it was negative");
 				}
 				else {
-					//firstMotor.set(0);
+					if(setToZero1) {
+					}
+					else {
+						firstMotor.set(0);
+						setToZero1 = true;
+					}
 					System.out.println("You inputed a really small number");
 				}
 				System.out.println(output);
 				System.out.println(java.time.LocalTime.now());
 				bufferedWrite.write(output);
+				System.out.println(java.time.LocalTime.now());
 				System.out.println(java.time.LocalTime.now()); 
-				Timer.delay(0.01);
-				System.out.println(java.time.LocalTime.now()); 
-				System.out.println(i);
-			}
-			bufferedWrite.flush();
 			bufferedWrite.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
