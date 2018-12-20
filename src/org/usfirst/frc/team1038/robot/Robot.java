@@ -104,7 +104,9 @@ public class Robot extends IterativeRobot {
 	
 	private double prevXStick, prevZStick;
 	
-	
+	private File recording;
+	private FileWriter fWrite;
+	private BufferedWriter fWriteBuff;
 	
 	
 	public Compressor comprende = new Compressor(0); // compre d  publi c
@@ -160,7 +162,19 @@ public class Robot extends IterativeRobot {
 		
 		
 		
-		m_autoSelected = gyro; // m_autoSelected
+		
+		
+		
+		
+		
+		
+		
+		m_autoSelected =record; // m_autoSelected
+		
+		
+		
+		
+		
 		
 		
 		
@@ -184,7 +198,7 @@ public class Robot extends IterativeRobot {
 	 * switch structure below with additional strings. If using the SendableChooser
 	 * make sure to add them to the chooser code above as well.
 	 */
-	@Override
+	@Override	
 	
 	public void autonomousInit() {
 		//m_autoSelected = m_chooser.getSelected(); // idk what this does
@@ -217,10 +231,22 @@ public class Robot extends IterativeRobot {
 	
 	public void teleopInit() {
 		encodeman.reset();
-		
+
 		startTime = System.currentTimeMillis();
-		  now = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
-		  nowNow = now.format(new Date());
+		now = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+		nowNow = now.format(new Date());
+		recordedInputs = new ArrayList<>();
+		playbackIndex = 0;
+
+		File recording = new File("/home/lvuser/recording" + nowNow + ".csv");
+		try {
+			fWrite = new FileWriter(recording);
+			fWriteBuff = new BufferedWriter(fWrite);
+		} catch (Exception r) {
+			System.out.println("bruh sound effect #2");
+		}
+		  
+		  
 	}
 
 	/**
@@ -253,6 +279,7 @@ public class Robot extends IterativeRobot {
 			}
 			spaRK.set(Double.parseDouble(commands[playbackIndex][2]));
 			spark2.set(Double.parseDouble(commands[playbackIndex][3]));
+			
 			break;
 		case pid:
 			//if (!group.isRunning())
@@ -302,6 +329,19 @@ public class Robot extends IterativeRobot {
 		
 	}
 
+	
+	public String combine(String[] cry, String sliptrt) {
+		String s = "";
+		for (int i=0; i<cry.length; i++) {
+			s += cry[i];
+			if (i<cry.length-1) s+= sliptrt;
+		}
+		return s;
+	}
+	
+	
+	
+	
 	/**
 	 * This function is called periodically during operator control.
 	 */
@@ -314,39 +354,89 @@ public class Robot extends IterativeRobot {
 		switch (m_autoSelected) {
 		case record:
 			// Recorder, please record my inputs!
-			spaRK.set(sticc.getX()*1);
-			spark2.set(sticc.getZ()*1);
+			spaRK.set(sticc.getX()*.5);
+			spark2.set(sticc.getZ()*.5);
 			
-			String[] curInput = {""+(int)(System.currentTimeMillis()-startTime), ""+0, ""+(sticc.getX()), ""+(sticc.getZ())};
+			String[] curInput = {""+(int)(System.currentTimeMillis()-startTime), ""+0, ""+(sticc.getX()*.5), ""+(sticc.getZ()*.5)};
+			
+			
+			
+			// TODO: write something to output the current array length??????
+			
+			
 			
 			// @l153, l170
 			arrayTouched = false;
 			if (sticc.getX() != prevXStick || sticc.getZ() != prevZStick) {
 				
-				recordedInputs.add(curInput);
+				//recordedInputs.add(curInput);
 				arrayTouched = true;
-				if (recordedInputs.size() > 1) {
-					int recInpSize = recordedInputs.size();
-					recordedInputs.get(recInpSize-1)[1] = ""+(Integer.parseInt(recordedInputs.get(recInpSize-1)[0]) - Integer.parseInt(recordedInputs.get(recInpSize-2)[0]));
-				}
+//				if (recordedInputs.size() > 1) {
+//					int recInpSize = recordedInputs.size();
+//					recordedInputs.get(recInpSize-1)[1] = ""+(Integer.parseInt(recordedInputs.get(recInpSize-1)[0]) - Integer.parseInt(recordedInputs.get(recInpSize-2)[0]));
+//				}
 			}
 			
 
-			spaRK.set(sticc.getX()*1);
-			spark2.set(sticc.getZ()*1);
 			
 			
-			Object[][] recordedInputsToArray = new Object[recordedInputs.size()][];
+			/*Object[][] recordedInputsToArray = new Object[recordedInputs.size()][];
 			for (int i = 0; i<recordedInputs.size(); i++) {
 				recordedInputsToArray[i] = recordedInputs.get(i);
 			}
 			System.out.println(Arrays.deepToString(recordedInputsToArray));
+			*/
+			//try{recording.createNewFile();}catch(Exception e) {}
 			
-			File recording = new File("/home/lvuser/recording"+nowNow+".csv");
-			try{recording.createNewFile();}catch(Exception e) {}
+			if (arrayTouched) {
+
+				try {
+					fWriteBuff.write(combine(curInput, ","));
+					fWriteBuff.newLine();
+				} catch (Exception e) {
+				}
+				
+			}
 			
-			if (arrayTouched) CSV.tab2csv(recordedInputsToArray, recording);
 			
+			
+		////// VVVVVVVVVVVVV COMPRESSOR STUFF (testPeriodic DOES NOT WORK)
+					spaRK.set(sticc.getX()*1);
+					spark2.set(sticc.getZ()*1);
+					
+					System.out.println("Current Solenoid: " + (int)(currentSolenoid+.5f) + " -- Press X to change");
+					System.out.print("                                                      Solenoid States:  ");
+					
+					for (int sol=0; sol<ligmoids.size(); sol++) {
+						System.out.print("" + sol + ":" + ligmoids.get(sol).get() + ",  ");
+					}
+					System.out.println(".");
+					try {
+						if ((int)(currentSolenoid+.5f) >= ligmoids.size())
+							currentSolenoid = currentSolenoid - 4;
+						
+						DoubleSolenoid ligmoid = ligmoids.get((int)(currentSolenoid+.5f));
+						if (sticc.getRawButton(1)) // X
+							if (!buttonPressed) {
+								currentSolenoid = (currentSolenoid + 1) % ligmoids.size();
+								System.out.println("Changed solenoid to Solenoid " + currentSolenoid);
+								buttonPressed = true;
+							}
+						if (!sticc.getRawButton(1)) // if X is NOT pressed
+							if (buttonPressed) {
+								buttonPressed = false;
+							}
+						if (sticc.getRawButton(2)) {// A
+							ligmoid.set(DoubleSolenoid.Value.kForward);
+							
+						}
+						if (sticc.getRawButton(3)) // B
+							ligmoid.set(DoubleSolenoid.Value.kReverse);
+						if (sticc.getRawButton(4)) // Y
+							ligmoid.set(DoubleSolenoid.Value.kOff);
+					} catch (Exception minecraft) {
+						throw minecraft;
+					}
 			
 			break;
 		case pid:
