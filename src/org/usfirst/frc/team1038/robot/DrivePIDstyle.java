@@ -8,17 +8,24 @@ import edu.wpi.first.wpilibj.command.PIDCommand;
 public class DrivePIDstyle extends PIDCommand {
 
 	
-	private final static double dP = 0.150; //.04 limo
-	private final static double dI = 0.000;
-	private final static double dD = 0.002;
+	private final static double dPs1 = 0.13000; //.04 limo
+	private final static double dIs1 = 0;
+	private final static double dDs1 = 0.03;
+	private final static double dPt = 0.13000; //.04 limo
+	private final static double dIt= 0;
+	private final static double dDt = 0.03;
+	
 	private PIDController drivePID = getPIDController();
-	public static final double TOLERANCE = 20;
+	private I2CGyro gyroSensor = I2CGyro.getInstance();
+	
+	public static final double TOLERANCE = 0.25;
 	
 	private Spark jeb;
 	private Encoder eman;
 	
 	public DrivePIDstyle(double target, Spark j, Encoder e) {
-		super(dP,dI,dD);
+		super(dPs1,dIs1,dDs1);
+		
 		
 		
 		setSetpoint(target); //   don't call your argument "setpoint" if your function name is "setSetpoint"
@@ -28,7 +35,7 @@ public class DrivePIDstyle extends PIDCommand {
 		
 		jeb      =j;
 		eman     =e;
-		System.out.println("Dri]vePIDstyle constructor executed");
+		System.out.println(" Dri]vePIDstyle constructor executed");
 		requires(Robot.robotDrive); // what
 		
 	}
@@ -53,7 +60,9 @@ public class DrivePIDstyle extends PIDCommand {
 
 	@Override
 	protected void usePIDOutput(double output) {
-		jeb.setSpeed(output);
+		
+		jeb.setSpeed(-output);
+		
 		
 	}
 

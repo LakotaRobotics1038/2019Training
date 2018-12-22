@@ -48,6 +48,17 @@ public class Robot extends IterativeRobot {
 	
 	private static final String kDefaultAuto = "Default";
 	private static final String kCustomAuto = "My Auto";
+	private static final String record = "record";
+	private static final String pid = "dip";
+	private static final String doesThisTing = "pba";
+	private static final String gears = "MOVING THE GEARS!!!! MOVING THE GEARS!!!!!";
+	private static final String compressor = "compressor things";
+	private static final String nothing = "notting";
+	private static final String testDrive = "just moving the wheels";
+	private static final String gyro = "gg";
+	
+		
+	
 	public static final double WHEEL_DIAM = 6;
 	public static final double COUNTS_PER_REV = 207;
 	private String m_autoSelected;
@@ -65,6 +76,8 @@ public class Robot extends IterativeRobot {
 	private Joystick sticc;
 	
 	private Encoder encodeman;
+	private Encoder encodeman2;
+	
 	
 	/*private DoubleSolenoid ligmoid;
 	private DosubleSolenoid ligmoid2;*/
@@ -75,6 +88,8 @@ public class Robot extends IterativeRobot {
 	private Servo servo;
 	
 	private Relay relay;
+	
+	private I2CGyro gyrate;
 	
 	private CommandGroup group;
 	private Scheduler schedule;
@@ -89,6 +104,9 @@ public class Robot extends IterativeRobot {
 	
 	private double prevXStick, prevZStick;
 	
+	private File recording;
+	private FileWriter fWrite;
+	private BufferedWriter fWriteBuff;
 	
 	
 	public Compressor comprende = new Compressor(0); // compre d  publi c
@@ -106,6 +124,10 @@ public class Robot extends IterativeRobot {
 		sticc = new Joystick(0);
 		encodeman = new Encoder(2,3);
 		encodeman.reset();
+		encodeman2 = new Encoder(0,1);
+		encodeman2.reset();
+		
+		
 		/*ligmoid2 = new DoubleSolenoid(2,3);
 		ligmoid = new DoubleSolenoid(4,5); // I don't know what port solenoid engages the wheel gear
 		ligmoid3 = new DoubleSolenoid(6,7); // I don't know what port solenoid engages the wheel gear
@@ -128,7 +150,38 @@ public class Robot extends IterativeRobot {
 		
 		
 		schedule = Scheduler.getInstance(); // why does it work???
-		schedule.add(new DrivePIDstyle(0, spark2, encodeman));
+		gyrate = I2CGyro.getInstance();
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		m_autoSelected =record; // m_autoSelected
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 
 	}
@@ -145,24 +198,24 @@ public class Robot extends IterativeRobot {
 	 * switch structure below with additional strings. If using the SendableChooser
 	 * make sure to add them to the chooser code above as well.
 	 */
-	@Override
+	@Override	
 	
 	public void autonomousInit() {
-		m_autoSelected = m_chooser.getSelected();
+		//m_autoSelected = m_chooser.getSelected(); // idk what this does
 		// autoSelected = SmartDashboard.getString("Auto Selector",
 		// defaultAuto);
 		System.out.println("Auto selected: " + m_autoSelected);
 //		encodeman.reset();
 //		
-//		group = new CommandGroup();
-//		group.addSequential(new DrivePIDstyle(0,spark2,encodeman));
-//		System.out.println("group.addSequential() executed");
-//		schedule.add(group);
-//		System.out.println("schedule.add() executed");
-//		//uncomment this stuff if you want to use PID
+		group = new CommandGroup();
+		group.addSequential(new DrivePIDstyle(100,spark2,encodeman));
+		System.out.println("group.addSequential() executed");
+		schedule.add(group);
+		System.out.println("schedule.add() executed");
+		//uncomment this stuff if you want to use PID
 		
 		startTime = System.currentTimeMillis();
-		commands = (String[][])CSV.csv2tab(new File("/home/lvuser/recording2018-12-10-192044.csv"));
+		commands = (String[][])CSV.csv2tab(new File("/home/lvuser/recording"+nowNow+".csv"));
 		
 	}
 	
@@ -178,10 +231,22 @@ public class Robot extends IterativeRobot {
 	
 	public void teleopInit() {
 		encodeman.reset();
-		
+
 		startTime = System.currentTimeMillis();
-		  now = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
-		  nowNow = now.format(new Date());
+		now = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+		nowNow = now.format(new Date());
+		recordedInputs = new ArrayList<>();
+		playbackIndex = 0;
+
+		File recording = new File("/home/lvuser/recording" + nowNow + ".csv");
+		try {
+			fWrite = new FileWriter(recording);
+			fWriteBuff = new BufferedWriter(fWrite);
+		} catch (Exception r) {
+			System.out.println("bruh sound effect #2");
+		}
+		  
+		  
 	}
 
 	/**
@@ -190,17 +255,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		
-		// Test Recording Things
-		while (playbackIndex < commands.length-1 && (int)(System.currentTimeMillis()-startTime) > Integer.parseInt(commands[playbackIndex][0]) ) { 
-			
-			System.out.println("playbackIndex: " + playbackIndex);
-			System.out.println(System.currentTimeMillis()-startTime);
-			System.out.println(Integer.parseInt(commands[playbackIndex][0]));
-			System.out.println("");
-			playbackIndex++;
-		}
-		spaRK.set(Double.parseDouble(commands[playbackIndex][2]));
-		spark2.set(Double.parseDouble(commands[playbackIndex][3]));
+		
 		
 		
 		
@@ -210,13 +265,41 @@ public class Robot extends IterativeRobot {
 			// Put custom auto code here
 			break;
 		case kDefaultAuto:
+			
+			
+		case record:
+			// Test Recording Things
+			while (playbackIndex < commands.length-1 && (int)(System.currentTimeMillis()-startTime) > Integer.parseInt(commands[playbackIndex][0]) ) { 
+				
+				System.out.println("playbackIndex: " + playbackIndex);
+				System.out.println(System.currentTimeMillis()-startTime);
+				System.out.println(Integer.parseInt(commands[playbackIndex][0]));
+				System.out.println("");
+				playbackIndex++;
+			}
+			spaRK.set(Double.parseDouble(commands[playbackIndex][2]));
+			spark2.set(Double.parseDouble(commands[playbackIndex][3]));
+			
+			break;
+		case pid:
+			//if (!group.isRunning())
+			
+			
+			schedule.run();
+			System.out.println("schedule.run() passed");
+			// uncomment some of this (?) if you want to do PID stuff
+			System.out.println(encodeman.getDistance());
+			break;
+		case nothing:
+			;;;;;;;;;
+			break;
 		default:
 			// Put default auto code here
 			break;
+			
 		}
 		
 		
-		//System.out.println(encodeman.getDistance());
 		
 		
 		
@@ -241,41 +324,251 @@ public class Robot extends IterativeRobot {
 		//else
 			//spade2.set(-1*Math.abs(getDist(COUNTS_PER_REV, WHEEL_DIAM, encodeman.get())-doDistance)/(doDistance*2)-.5);
 		
-		//if (!group.isRunning())
+
 		
-		
-//		schedule.run();
-//		System.out.println("schedule.run() passed");
-//		// uncomment some of this (?) if you want to do PID stuff 
-//		
 		
 	}
 
+	
+	public String combine(String[] cry, String sliptrt) {
+		String s = "";
+		for (int i=0; i<cry.length; i++) {
+			s += cry[i];
+			if (i<cry.length-1) s+= sliptrt;
+		}
+		return s;
+	}
+	
+	
+	
+	
 	/**
 	 * This function is called periodically during operator control.
 	 */
 	@Override
 	public void teleopPeriodic() {
 		
-		// Recorder, please record my inputs!
-		spaRK.set(sticc.getX()*1);
-		spark2.set(sticc.getZ()*1);
+
+		System.out.println(m_autoSelected);
 		
-		String[] curInput = {""+(int)(System.currentTimeMillis()-startTime), ""+0, ""+(sticc.getX()), ""+(sticc.getZ())};
-		
-		// @l153, l170
-		arrayTouched = false;
-		if (sticc.getX() != prevXStick || sticc.getZ() != prevZStick) {
+		switch (m_autoSelected) {
+		case record:
+			// Recorder, please record my inputs!
+			spaRK.set(sticc.getX()*.5);
+			spark2.set(sticc.getZ()*.5);
 			
-			recordedInputs.add(curInput);
-			arrayTouched = true;
-			if (recordedInputs.size() > 1) {
-				int recInpSize = recordedInputs.size();
-				recordedInputs.get(recInpSize-1)[1] = ""+(Integer.parseInt(recordedInputs.get(recInpSize-1)[0]) - Integer.parseInt(recordedInputs.get(recInpSize-2)[0]));
+			String[] curInput = {""+(int)(System.currentTimeMillis()-startTime), ""+0, ""+(sticc.getX()*.5), ""+(sticc.getZ()*.5)};
+			
+			
+			
+			// TODO: write something to output the current array length??????
+			
+			
+			
+			// @l153, l170
+			arrayTouched = false;
+			if (sticc.getX() != prevXStick || sticc.getZ() != prevZStick) {
+				
+				//recordedInputs.add(curInput);
+				arrayTouched = true;
+//				if (recordedInputs.size() > 1) {
+//					int recInpSize = recordedInputs.size();
+//					recordedInputs.get(recInpSize-1)[1] = ""+(Integer.parseInt(recordedInputs.get(recInpSize-1)[0]) - Integer.parseInt(recordedInputs.get(recInpSize-2)[0]));
+//				}
+			}
+			
+
+			
+			
+			/*Object[][] recordedInputsToArray = new Object[recordedInputs.size()][];
+			for (int i = 0; i<recordedInputs.size(); i++) {
+				recordedInputsToArray[i] = recordedInputs.get(i);
+			}
+			System.out.println(Arrays.deepToString(recordedInputsToArray));
+			*/
+			//try{recording.createNewFile();}catch(Exception e) {}
+			
+			if (arrayTouched) {
+
+				try {
+					fWriteBuff.write(combine(curInput, ","));
+					fWriteBuff.newLine();
+				} catch (Exception e) {
+				}
+				
 			}
 			
 			
+			
+		////// VVVVVVVVVVVVV COMPRESSOR STUFF (testPeriodic DOES NOT WORK)
+					spaRK.set(sticc.getX()*1);
+					spark2.set(sticc.getZ()*1);
+					
+					System.out.println("Current Solenoid: " + (int)(currentSolenoid+.5f) + " -- Press X to change");
+					System.out.print("                                                      Solenoid States:  ");
+					
+					for (int sol=0; sol<ligmoids.size(); sol++) {
+						System.out.print("" + sol + ":" + ligmoids.get(sol).get() + ",  ");
+					}
+					System.out.println(".");
+					try {
+						if ((int)(currentSolenoid+.5f) >= ligmoids.size())
+							currentSolenoid = currentSolenoid - 4;
+						
+						DoubleSolenoid ligmoid = ligmoids.get((int)(currentSolenoid+.5f));
+						if (sticc.getRawButton(1)) // X
+							if (!buttonPressed) {
+								currentSolenoid = (currentSolenoid + 1) % ligmoids.size();
+								System.out.println("Changed solenoid to Solenoid " + currentSolenoid);
+								buttonPressed = true;
+							}
+						if (!sticc.getRawButton(1)) // if X is NOT pressed
+							if (buttonPressed) {
+								buttonPressed = false;
+							}
+						if (sticc.getRawButton(2)) {// A
+							ligmoid.set(DoubleSolenoid.Value.kForward);
+							
+						}
+						if (sticc.getRawButton(3)) // B
+							ligmoid.set(DoubleSolenoid.Value.kReverse);
+						if (sticc.getRawButton(4)) // Y
+							ligmoid.set(DoubleSolenoid.Value.kOff);
+					} catch (Exception minecraft) {
+						throw minecraft;
+					}
+			
+			break;
+		case pid:
+			if (schedule != null) {
+				schedule.run();
+				
+			}
+			
+			
+			break;
+		case gears:
+			System.out.println(finger.get());
+			if (!sticc.getRawButton(1)) {
+				spaRK.set(sticc.getX()*1);
+				spark2.set(sticc.getZ()*1);
+			} else {
+				spaRK.set(Math.sin(System.currentTimeMillis()*0.01)*0.5);
+				spark2.set(Math.cos(System.currentTimeMillis()*0.01)*0.5);
+			}
+			System.out.println(encodeman.get());     // MOVING THE GEARS!!!! MOVING THE GEARS!!!!!
+			
+			break;
+		case compressor:
+		////// VVVVVVVVVVVVV COMPRESSOR STUFF (testPeriodic DOES NOT WORK)
+			spaRK.set(sticc.getX()*1);
+			spark2.set(sticc.getZ()*1);
+			
+			System.out.println("Current Solenoid: " + (int)(currentSolenoid+.5f) + " -- Press X to change");
+			System.out.print("                                                      Solenoid States:  ");
+			
+			for (int sol=0; sol<ligmoids.size(); sol++) {
+				System.out.print("" + sol + ":" + ligmoids.get(sol).get() + ",  ");
+			}
+			System.out.println(".");
+			try {
+				if ((int)(currentSolenoid+.5f) >= ligmoids.size())
+					currentSolenoid = currentSolenoid - 4;
+				
+				DoubleSolenoid ligmoid = ligmoids.get((int)(currentSolenoid+.5f));
+				if (sticc.getRawButton(1)) // X
+					if (!buttonPressed) {
+						currentSolenoid = (currentSolenoid + 1) % ligmoids.size();
+						System.out.println("Changed solenoid to Solenoid " + currentSolenoid);
+						buttonPressed = true;
+					}
+				if (!sticc.getRawButton(1)) // if X is NOT pressed
+					if (buttonPressed) {
+						buttonPressed = false;
+					}
+				if (sticc.getRawButton(2)) {// A
+					ligmoid.set(DoubleSolenoid.Value.kForward);
+					
+				}
+				if (sticc.getRawButton(3)) // B
+					ligmoid.set(DoubleSolenoid.Value.kReverse);
+				if (sticc.getRawButton(4)) // Y
+					ligmoid.set(DoubleSolenoid.Value.kOff);
+			} catch (Exception minecraft) {
+				throw minecraft;
+			}
+			break;
+		case testDrive:
+			spaRK.set(sticc.getX()*1);
+			spark2.set(sticc.getZ()*1);
+			break;
+		case nothing:
+			;;;;;; //bbbzzz
+			break;
+		case gyro:
+			System.out.println(gyrate.getAngle());
+			break;
+		case gyro+gears:
+			System.out.println(finger.get());
+		if (!sticc.getRawButton(1)) {
+			spaRK.set(sticc.getX()*1);
+			spark2.set(sticc.getZ()*1);
+		} else {
+			spaRK.set(Math.sin(System.currentTimeMillis()*0.01)*0.5);
+			spark2.set(Math.cos(System.currentTimeMillis()*0.01)*0.5);
 		}
+		System.out.println(encodeman.get());     // MOVING THE GEARS!!!! MOVING THE GEARS!!!!!
+			gyrate.getAngle();
+			break;
+			
+			
+			
+			
+			/*relay.set(Relay.Value.kOn);
+			try{Thread.sleep(3);}catch(Exception p) {;}
+			relay.set(Relay.Value.kForward);
+			try{Thread.sleep(3);}catch(Exception p) {;}*/ // big loud clicker
+			
+			// set motor by limit switch
+			/*spade2.set(finger.get() ? -0.4 : 0.4);
+			System.out.println(finger.get());*/
+			
+			// turn on light (press between X and B)
+			/*servo.set((sticc.getX()/2)+0.5);
+			System.out.println((sticc.getX()/2)+0.5);
+			if (sticc.getRawButton(0)) // X
+				relay.set(Relay.Value.kOff);
+			if (sticc.getRawButton(1)) // A
+				relay.set(Relay.Value.kOn);
+			if (sticc.getRawButton(2)) // B
+				relay.set(Relay.Value.kForward);
+			if (sticc.getRawButton(3)) // Y
+				relay.set(Relay.Value.kReverse);*/
+			
+			
+			//long[] delays = {400,400,400,66*4,33*4,400,66*4,33*4,400}; // star wars thing
+			/*ArrayList<Long> delaybs = new ArrayList<Long>(300);
+			for (int i=200;i>0;i--) {
+				delaybs.add((long)i);
+			} */
+			
+			/*Object[] delays = delaybs.toArray();
+			for (int i=0; i<delays.length; i++) {
+				relay.set(Relay.Value.kOn);
+				try{Thread.sleep(6);}catch(Exception p) {;}
+				relay.set(Relay.Value.kForward);
+				try{Thread.sleep((long)delays[i]);}catch(Exception p) {;}
+			}
+			System.exit(9899899889);*/
+	        // maybe it's just because auton periodic doesn't work
+		} // ---------END Switch Case----------------
+			
+		
+		
+		
+
+		System.out.println("" + encodeman.get()+ "     " + encodeman2.get());
+		
 		
 		/*try{File hello = new File("/home/lvuser/Outputt.txt");
 		if (!hello.exists()) {
@@ -291,126 +584,6 @@ public class Robot extends IterativeRobot {
 		}catch (Exception e) {
 			System.out.println(e);
 		}*/
-		
-		
-		
-		
-		Object[][] recordedInputsToArray = new Object[recordedInputs.size()][];
-		for (int i = 0; i<recordedInputs.size(); i++) {
-			recordedInputsToArray[i] = recordedInputs.get(i);
-		}
-		System.out.println(Arrays.deepToString(recordedInputsToArray));
-		
-		File recording = new File("/home/lvuser/recording"+nowNow+".csv");
-		try{recording.createNewFile();}catch(Exception e) {}
-		
-		if (arrayTouched) CSV.tab2csv(recordedInputsToArray, recording);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		/*
-		//System.out.println(finger.get());
-		//if (!sticc.getRawButton(1)) {
-			spaRK.set(sticc.getX()*1);
-			spark2.set(sticc.getZ()*1);
-		//} else {
-		//	spade.set(Math.sin(System.currentTimeMillis()*0.01)*0.5);
-		//	spade2.set(Math.cos(System.currentTimeMillis()*0.01)*0.5);
-		//}
-		//System.out.println(encodeman.get());     // MOVING THE GEARS!!!! MOVING THE GEARS!!!!!
-		
-		
-		////// VVVVVVVVVVVVV COMPRESSOR STUFF (testPeriodic DOES NOT WORK)
-		
-		
-		
-		System.out.println("Current Solenoid: " + (int)(currentSolenoid+.5f) + " -- Press X to change");
-		System.out.print("                                                      Solenoid States:  ");
-		
-		for (int sol=0; sol<ligmoids.size(); sol++) {
-			System.out.print("" + sol + ":" + ligmoids.get(sol).get() + ",  ");
-		}
-		System.out.println(".");
-		try {
-			if ((int)(currentSolenoid+.5f) >= ligmoids.size())
-				currentSolenoid = currentSolenoid - 4;
-			
-			DoubleSolenoid ligmoid = ligmoids.get((int)(currentSolenoid+.5f));
-			if (sticc.getRawButton(1)) // X
-				if (!buttonPressed) {
-					currentSolenoid = (currentSolenoid + 1) % ligmoids.size();
-					System.out.println("Changed solenoid to Solenoid " + currentSolenoid);
-					buttonPressed = true;
-				}
-			if (!sticc.getRawButton(1)) // if X is NOT pressed
-				if (buttonPressed) {
-					buttonPressed = false;
-				}
-			if (sticc.getRawButton(2)) {// A
-				ligmoid.set(DoubleSolenoid.Value.kForward);
-				
-			}
-			if (sticc.getRawButton(3)) // B
-				ligmoid.set(DoubleSolenoid.Value.kReverse);
-			if (sticc.getRawButton(4)) // Y
-				ligmoid.set(DoubleSolenoid.Value.kOff);
-		} catch (Exception minecraft) {
-			throw minecraft;
-		}
-		
-		/*relay.set(Relay.Value.kOn);
-		try{Thread.sleep(3);}catch(Exception p) {;}
-		relay.set(Relay.Value.kForward);
-		try{Thread.sleep(3);}catch(Exception p) {;}*/ // big loud clicker
-		
-		// set motor by limit switch
-		/*spade2.set(finger.get() ? -0.4 : 0.4);
-		System.out.println(finger.get());*/
-		
-		// turn on light (press between X and B)
-		/*servo.set((sticc.getX()/2)+0.5);
-		System.out.println((sticc.getX()/2)+0.5);
-		if (sticc.getRawButton(0)) // X
-			relay.set(Relay.Value.kOff);
-		if (sticc.getRawButton(1)) // A
-			relay.set(Relay.Value.kOn);
-		if (sticc.getRawButton(2)) // B
-			relay.set(Relay.Value.kForward);
-		if (sticc.getRawButton(3)) // Y
-			relay.set(Relay.Value.kReverse);*/
-		
-		
-		//long[] delays = {400,400,400,66*4,33*4,400,66*4,33*4,400}; // star wars thing
-		/*ArrayList<Long> delaybs = new ArrayList<Long>(300);
-		for (int i=200;i>0;i--) {
-			delaybs.add((long)i);
-		} */
-		
-		/*Object[] delays = delaybs.toArray();
-		for (int i=0; i<delays.length; i++) {
-			relay.set(Relay.Value.kOn);
-			try{Thread.sleep(6);}catch(Exception p) {;}
-			relay.set(Relay.Value.kForward);
-			try{Thread.sleep((long)delays[i]);}catch(Exception p) {;}
-		}
-		System.exit(9899899889);*/
-        // maybe it's just because auton periodic doesn't work
-		
-//		if (schedule != null) {
-//			schedule.run();
-//			
-//		}
-//		//uncomment all this if you want to do PID stuff
 
 	}
 	
