@@ -30,9 +30,9 @@ Spark motor1 = new Spark(0);
 Spark motor2 = new Spark(1);
 Spark motor3 = new Spark(3);
 Spark motor4 = new Spark(4);
-JoystickAZ LJoystick = new JoystickAZ(1);
-EncoderAZ enc1 = EncoderAZ.getInstance1();
-EncoderAZ enc2 = EncoderAZ.getInstance2();
+JoystickA LJoystick = new JoystickA(1);
+EncoderA enc1 = EncoderA.getInstance1();
+EncoderA enc2 = EncoderA.getInstance2();
 Compressor compressor1 = new Compressor(0);
 
 /**
@@ -75,6 +75,10 @@ System.out.println("Auto selected: " + m_autoSelected);
 */
 @Override
 public void autonomousPeriodic() {
+	motor1.set(.3);
+	motor2.set(.3);
+	motor3.set(.3);
+	motor4.set(.3);
 System.out.println(enc1.getCount() + " , " + enc2.getCount());
 System.out.println(enc1.getDistance() + " , " + enc2.getDistance());
 }
@@ -90,16 +94,16 @@ public void teleopPeriodic() {
 	motor1.set(LJoystick.getLeftJoystickVertical() * .5);
 	motor2.set(LJoystick.getLeftJoystickVertical() * .5);
 	if(LJoystick.getXButton()) {
-		(PneumaticsAZ.getInstance1()).highGear();
+		(PneumaticsA.getInstance1()).highGear();
 	}
 	if(LJoystick.getYButton()) {
-		(PneumaticsAZ.getInstance1()).lowGear();
+		(PneumaticsA.getInstance1()).lowGear();
 	}
 	if(LJoystick.getAButton()) {
-		(PneumaticsAZ.getInstance2()).PTOOn();
+		(PneumaticsA.getInstance2()).PTOOn();
 	}
 	if(LJoystick.getBButton()) {
-		(PneumaticsAZ.getInstance2()).PTOOff();
+		(PneumaticsA.getInstance2()).PTOOff();
 	}
 	
 }
